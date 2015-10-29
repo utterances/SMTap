@@ -16,7 +16,9 @@ class ViewController: UIViewController {
 	@IBOutlet weak var repeatLabel: UILabel!
 	@IBOutlet weak var lengthField: UITextField!
 	
-	@IBOutlet weak var taskTableview: UITableView!
+	@IBOutlet weak var sessionTableview: UITableView!
+	@IBOutlet weak var sessionHistoryTableView: UITableView!
+	@IBOutlet weak var taskHistoryTableView: UITableView!
 	
 	var engine = ExpEngine()
 	

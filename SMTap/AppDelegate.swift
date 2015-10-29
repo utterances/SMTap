@@ -11,6 +11,12 @@ import UIKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+	enum DefaultsKey:String {
+		case CurrentSession
+		case TaskHistory
+		case SessionHistory
+	}
+	
 	var window: UIWindow?
 
 

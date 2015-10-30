@@ -15,6 +15,7 @@ class ExpEngine : NSObject {
 		case Slow
 		case Normal
 		case Fast
+		static let allValues = [Slow, Normal, Fast]
 	}
 	
 	struct Task: CustomStringConvertible {
@@ -58,8 +59,6 @@ class ExpEngine : NSObject {
 	
 //	override init() {
 //		super.init()
-//		session.append(Task(length: 10, repeats: 1, type: .Normal))
-//		session[0] = Task(length: 20, repeats: 2, type: .Normal)
 //	}
 	
 	func seqToInterval(seq:[(type: Tap, dur: Double)]) -> [Double] {
@@ -98,7 +97,6 @@ class ExpEngine : NSObject {
 	func intervalToString(invSeq: [Double]) -> String {
 		return invSeq.map{"\(Int($0)) "}.reduce(""){$0 + $1}
 	}
-	
 	
 //	MARK: - recording methods
 	
@@ -224,6 +222,13 @@ class ExpEngine : NSObject {
 		}
 		
 		curRecordingsAll.removeAll(keepCapacity: true)
+	}
+	
+	
+//	MARK: - session and tasks
+	
+	func addTask(length: Int, repeats: Int, type: TaskType) {
+		session.append(Task(length: length, repeats: repeats, type: type))
 	}
 }
 

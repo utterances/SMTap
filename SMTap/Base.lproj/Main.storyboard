@@ -36,12 +36,6 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="21"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="40" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="WNM-nA-hRQ">
-                                <rect key="frame" x="201" y="241" width="97" height="30"/>
-                                <animations/>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
-                            </textField>
                             <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="7" translatesAutoresizingMaskIntoConstraints="NO" id="dMW-bJ-wpT">
                                 <rect key="frame" x="18" y="179" width="220" height="31"/>
                                 <animations/>
@@ -50,21 +44,28 @@
                                 </connections>
                             </slider>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Length" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eTa-0m-zFt">
-                                <rect key="frame" x="20" y="250" width="54" height="21"/>
+                                <rect key="frame" x="23" y="233" width="54" height="21"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Type" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="v2J-55-50w">
+                                <rect key="frame" x="39" y="280" width="38" height="21"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Repeat" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qa5-Nl-sFH">
-                                <rect key="frame" x="20" y="150" width="54" height="21"/>
+                                <rect key="frame" x="23" y="150" width="54" height="21"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Repeat" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eDm-8X-Wuj">
-                                <rect key="frame" x="244" y="183" width="54" height="21"/>
+                                <rect key="frame" x="255" y="183" width="54" height="21"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -157,9 +158,12 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S2x-GL-95E">
-                                <rect key="frame" x="206" y="304" width="103" height="30"/>
+                                <rect key="frame" x="209" y="330" width="98" height="30"/>
                                 <animations/>
-                                <state key="normal" title="Add to Session"/>
+                                <state key="normal" title="Add New Task"/>
+                                <connections>
+                                    <action selector="addTask:" destination="BYZ-38-t0r" eventType="touchUpInside" id="gFA-JX-gyZ"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Task Config" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KM3-7j-KDz">
                                 <rect key="frame" x="20" y="101" width="133" height="27"/>
@@ -170,10 +174,28 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vs2-fB-c8R">
-                                <rect key="frame" x="20" y="304" width="34" height="30"/>
+                                <rect key="frame" x="20" y="330" width="34" height="30"/>
                                 <animations/>
                                 <state key="normal" title="Save"/>
+                                <connections>
+                                    <action selector="saveTask:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Uhp-UW-v7A"/>
+                                </connections>
                             </button>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" translatesAutoresizingMaskIntoConstraints="NO" id="dra-aS-fQm">
+                                <rect key="frame" x="131" y="273" width="176" height="29"/>
+                                <animations/>
+                                <segments>
+                                    <segment title="Slow"/>
+                                    <segment title="Normal"/>
+                                    <segment title="Fast"/>
+                                </segments>
+                            </segmentedControl>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="40" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="WNM-nA-hRQ">
+                                <rect key="frame" x="131" y="229" width="97" height="30"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                            </textField>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -185,14 +207,16 @@
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="iPad"/>
                     <connections>
+                        <outlet property="addTaskButton" destination="S2x-GL-95E" id="8bc-v7-B50"/>
                         <outlet property="idField" destination="pYC-5w-MpW" id="jFI-C8-rsc"/>
                         <outlet property="lengthField" destination="WNM-nA-hRQ" id="92h-OK-z9A"/>
                         <outlet property="repeatLabel" destination="eDm-8X-Wuj" id="YwX-Rx-Vfh"/>
                         <outlet property="repeatSlider" destination="dMW-bJ-wpT" id="GRo-kY-fco"/>
+                        <outlet property="saveButton" destination="Vs2-fB-c8R" id="QQQ-dm-juP"/>
                         <outlet property="sessionHistoryTableView" destination="fNA-Q3-qL2" id="eWM-6r-OIu"/>
-                        <outlet property="sessionTableview" destination="qTv-jl-Hq2" id="IkF-UK-dut"/>
-                        <outlet property="tapButton" destination="pAp-bk-nAn" id="7lT-cR-BXo"/>
+                        <outlet property="sessionTableview" destination="qTv-jl-Hq2" id="8Yh-iX-sXy"/>
                         <outlet property="taskHistoryTableView" destination="KHb-LZ-g9V" id="EfT-nF-IoZ"/>
+                        <outlet property="typeSegControl" destination="dra-aS-fQm" id="741-MN-aOL"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

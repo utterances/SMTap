@@ -11,10 +11,13 @@ import UIKit
 class ViewController: UIViewController {
 
 	@IBOutlet weak var idField: UITextField!
-	@IBOutlet weak var tapButton: UIButton!
+	
 	@IBOutlet weak var repeatSlider: UISlider!
 	@IBOutlet weak var repeatLabel: UILabel!
 	@IBOutlet weak var lengthField: UITextField!
+	@IBOutlet weak var typeSegControl: UISegmentedControl!
+	@IBOutlet weak var saveButton: UIButton!
+	@IBOutlet weak var addTaskButton: UIButton!
 	
 	@IBOutlet weak var sessionTableview: UITableView!
 	@IBOutlet weak var sessionHistoryTableView: UITableView!
@@ -27,11 +30,17 @@ class ViewController: UIViewController {
 		// Do any additional setup after loading the view, typically from a nib.
 	}
 
+	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated)
+		sessionTableview.setEditing(true, animated: false)
+	}
+	
 	override func didReceiveMemoryWarning() {
 		super.didReceiveMemoryWarning()
 		// Dispose of any resources that can be recreated.
 	}
 
+//	MARK: - UI events
 
 	@IBAction func sliderChanged(sender: UISlider) {
 		let index = round(sender.value)
@@ -40,7 +49,19 @@ class ViewController: UIViewController {
 		engine.repeats = Int(sender.value)
 	}
 	
+	@IBAction func addTask(sender: UIButton) {
+		sessionTableview.beginUpdates()
+		engine.addTask(Int(lengthField.text!)!, repeats: Int(repeatSlider.value), type: ExpEngine.TaskType.allValues[typeSegControl.selectedSegmentIndex])
+		
+		sessionTableview.insertRowsAtIndexPaths([NSIndexPath(forRow: engine.session.count-1, inSection: 0)], withRowAnimation: .Automatic)
+		sessionTableview.endUpdates()
+	}
 	
+	@IBAction func saveTask(sender: UIButton) {
+		sender.enabled = false
+	}
+	
+//	MARK: nav
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 		// Get the new view controller using segue.destinationViewController.
 		// Pass the selected object to the new view controller.
@@ -54,7 +75,7 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: UITableViewDelegate {
-	
+
 }
 
 extension ViewController: UITableViewDataSource {
@@ -64,7 +85,7 @@ extension ViewController: UITableViewDataSource {
 		case sessionHistoryTableView:	return engine.sessionHistory.count
 		case taskHistoryTableView:		return engine.taskHistory.count
 		default: return 0
-		}
+	 	}
 	}
 	
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -80,5 +101,18 @@ extension ViewController: UITableViewDataSource {
 		}
 		
 		return cell
+	}
+	
+	func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+		return tableView == sessionTableview
+	}
+
+	// Override to support rearranging the table view.
+	func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
+		assert(tableView == sessionTableview)
+		let f = engine.session[fromIndexPath.item]
+		let t = engine.session[toIndexPath.item]
+		engine.session[toIndexPath.item] = f
+		engine.session[fromIndexPath.item] = t
 	}
 }

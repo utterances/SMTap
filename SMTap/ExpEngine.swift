@@ -11,55 +11,58 @@ import AVFoundation
 
 class ExpEngine : NSObject {
 
-	enum TaskType {
-		case slow
-		case normal
-		case fast
+	enum TaskType: String {
+		case Slow
+		case Normal
+		case Fast
 	}
 	
-	struct Task {
+	struct Task: CustomStringConvertible {
 		var length: Int
 		var repeats: Int
 		var type: TaskType
+		var description: String { return "\(type): \(repeats)x \(length)" }
 	}
 	
 	struct expRecord {
 		var ID: String
 		var seq: [[Double]]!
-		var strseq: [String]!
+//		var strseq: [String]!
+		var fileName: String { return "\(ID)" }
 		
-		var fileName: String {
-			return "\(ID)"
-		}
-		
-		init(ID: String) {
-			self.ID = ID
-		}
+		init(ID: String) { self.ID = ID }
 	}
 	
-	enum tap : String {
+	enum Tap: String {
 		case Up
 		case Down
 	}
 	
-	var currentRecord: expRecord!
+// storage:
+	var taskHistory: [Task] = [Task]()
+	var session: [Task] = [Task]()
+	var sessionHistory = [[Task]]()
 	
 //	recording stuff
+	var currentRecord: expRecord!
+
 	var length: Int = 0
 	var repeats: Int = 0
 	
 	var isRecording = false
 	
-	private var curRecording = [(type: tap, dur: Double)]()
-	private var curRecordingsAll = [[(type: tap, dur: Double)]]()
+	private var curRecording = [(type: Tap, dur: Double)]()
+	private var curRecordingsAll = [[(type: Tap, dur: Double)]]()
 	private var startTime: NSTimeInterval = 0
 	private var curPracticeCount:Int = 0
 	
 //	override init() {
 //		super.init()
+//		session.append(Task(length: 10, repeats: 1, type: .Normal))
+//		session[0] = Task(length: 20, repeats: 2, type: .Normal)
 //	}
 	
-	func seqToInterval(seq:[(type: tap, dur: Double)]) -> [Double] {
+	func seqToInterval(seq:[(type: Tap, dur: Double)]) -> [Double] {
 //		convert up down data into interval format, use ms and lower precision
 		var result = [Double]()
 		
@@ -78,7 +81,7 @@ class ExpEngine : NSObject {
 		return result
 	}
 
-	func seqToString(seq:[(type: tap, dur: Double)]) -> [String] {
+	func seqToString(seq:[(type: Tap, dur: Double)]) -> [String] {
 		var result = [String]()
 		
 		for s in seq {
@@ -143,7 +146,7 @@ class ExpEngine : NSObject {
 		saveEvent(.Down, time: NSDate().timeIntervalSince1970)
 	}
 	
-	private func saveEvent(type: tap, time: NSTimeInterval) {
+	private func saveEvent(type: Tap, time: NSTimeInterval) {
 		guard isRecording else {
 			return	// sanity check here, shouldn't really happen
 		}
@@ -164,7 +167,7 @@ class ExpEngine : NSObject {
 		}
 	}
 	
-	private func saveToFile(seqs:[[(type: tap, dur: Double)]], outlier:Bool) {
+	private func saveToFile(seqs:[[(type: Tap, dur: Double)]], outlier:Bool) {
 //		NSLog("salva me")
 		//		make file name
 //		let formatter = NSDateFormatter()

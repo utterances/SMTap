@@ -59,11 +59,25 @@ extension ViewController: UITableViewDelegate {
 
 extension ViewController: UITableViewDataSource {
 	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return 0
+		switch tableView {
+		case sessionTableview:			return engine.session.count
+		case sessionHistoryTableView:	return engine.sessionHistory.count
+		case taskHistoryTableView:		return engine.taskHistory.count
+		default: return 0
+		}
 	}
 	
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCellWithIdentifier("taskCell", forIndexPath: indexPath)
+		switch tableView {
+		case sessionTableview:
+			cell.textLabel?.text = engine.session[indexPath.item].description
+		case sessionHistoryTableView:
+			cell.textLabel?.text = "\(engine.sessionHistory[indexPath.item].count)"
+		case taskHistoryTableView:
+			cell.textLabel?.text = engine.taskHistory[indexPath.item].description
+		default: break
+		}
 		
 		return cell
 	}

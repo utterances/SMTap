@@ -55,12 +55,32 @@ class ViewController: UIViewController {
 		
 		sessionTableview.insertRowsAtIndexPaths([NSIndexPath(forRow: engine.session.count-1, inSection: 0)], withRowAnimation: .Automatic)
 		sessionTableview.endUpdates()
+		taskHistoryTableView.reloadData()
 	}
 	
 	@IBAction func saveTask(sender: UIButton) {
+		if let i = sessionTableview.indexPathForSelectedRow {
+			let task = ExpEngine.Task(length: Int(lengthField.text!)!, repeats: Int(repeatSlider.value), type: ExpEngine.TaskType.allValues[typeSegControl.selectedSegmentIndex])
+			
+			engine.session[i.item] = task
+			engine.addToHistory(task)
+			sessionTableview.reloadRowsAtIndexPaths([i], withRowAnimation: .Left)
+		}
+		
 		sender.enabled = false
 	}
 	
+	@IBAction func endEditLength(sender: UITextField) {
+		if let i = Int(sender.text!) {
+			sender.text = "\(i)"
+		} else {
+			sender.text = "16"
+		}
+	}
+	
+	@IBAction func startSession(sender: UIButton) {
+		engine.saveSession()
+	}
 //	MARK: nav
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 		// Get the new view controller using segue.destinationViewController.
@@ -74,8 +94,58 @@ class ViewController: UIViewController {
 	}
 }
 
-extension ViewController: UITableViewDelegate {
+extension ViewController: UITextFieldDelegate {
+	func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+		let numbers = "0123456789"
+		for c in string.characters {
+			if !numbers.characters.contains(c) { return false }
+		}
+		return true
+	}
+}
 
+extension ViewController: UITableViewDelegate {
+	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+		let task: ExpEngine.Task
+		switch tableView {
+		case sessionTableview:
+			if let i = taskHistoryTableView.indexPathForSelectedRow {
+				taskHistoryTableView.deselectRowAtIndexPath(i, animated: true)
+			}
+			saveButton.enabled = true
+			task = engine.session[indexPath.item]
+		case taskHistoryTableView:
+			if let i = sessionTableview.indexPathForSelectedRow {
+				sessionTableview.deselectRowAtIndexPath(i, animated: true)
+			}
+			saveButton.enabled = false
+			task = engine.taskHistory[indexPath.item]
+		default: return
+		}
+		
+//		load task in "editor"
+		
+		repeatSlider.value = Float(task.repeats)
+//		repeatLabel.text = task.repeats
+		lengthField.text = "\(task.length)"
+		typeSegControl.selectedSegmentIndex = ExpEngine.TaskType.allValues.indexOf(task.type)!
+	}
+	
+	func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+		if editingStyle == .Delete {
+			// Delete the row from the data source
+			switch tableView {
+			case sessionTableview:
+				engine.session.removeAtIndex(indexPath.item)
+			case taskHistoryTableView:
+				engine.taskHistory.removeAtIndex(indexPath.item)
+			case sessionHistoryTableView:
+				engine.sessionHistory.removeAtIndex(indexPath.item)
+			default: return
+			}
+			tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Left)
+		}
+	}
 }
 
 extension ViewController: UITableViewDataSource {
@@ -94,7 +164,7 @@ extension ViewController: UITableViewDataSource {
 		case sessionTableview:
 			cell.textLabel?.text = engine.session[indexPath.item].description
 		case sessionHistoryTableView:
-			cell.textLabel?.text = "\(engine.sessionHistory[indexPath.item].count)"
+			cell.textLabel?.text = engine.summarize(engine.sessionHistory[indexPath.item])
 		case taskHistoryTableView:
 			cell.textLabel?.text = engine.taskHistory[indexPath.item].description
 		default: break

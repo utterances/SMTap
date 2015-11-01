@@ -40,7 +40,9 @@ class ExpEngine : NSObject {
 	}
 	
 // storage:
-	var taskHistory: [Task] = [Task]()
+	var taskHistory: [Task] = [Task]() {
+		didSet { if taskHistory.count > 10 { taskHistory.removeLast() } }
+	}
 	var session: [Task] = [Task]()
 	var sessionHistory = [[Task]]()
 	
@@ -227,8 +229,43 @@ class ExpEngine : NSObject {
 	
 //	MARK: - session and tasks
 	
+	func summarize(session: [Task]) -> String {
+		var result = ""
+		for t in session {
+			if result.characters.count > 0 { result += " " }
+			result += "\(t.type.rawValue.characters.first)\(t.repeats)x\(t.length)"
+		}
+		return result
+	}
+	
 	func addTask(length: Int, repeats: Int, type: TaskType) {
-		session.append(Task(length: length, repeats: repeats, type: type))
+		let task = Task(length: length, repeats: repeats, type: type)
+		session.append(task)
+		addToHistory(task)
+	}
+	
+	func addToHistory(task: Task) {
+		if !(taskHistory.contains{
+			$0.length == task.length && $0.repeats == task.repeats && $0.type == task.type }) {
+				taskHistory.insert(task, atIndex: 0)
+		}
+	}
+	
+	func saveSession() {
+		let saved = sessionHistory.contains {
+			guard $0.count == session.count else { return false }
+			
+			for i in 0..<$0.count {
+				if $0[i].length != session[i].length || $0[i].repeats != session[i].repeats || $0[i].type == session[i].type {
+					return false
+				}
+			}
+			return true
+		}
+		
+		guard !saved else { return }
+		
+		sessionHistory.append(session)
 	}
 }
 

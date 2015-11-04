@@ -28,7 +28,6 @@
                                 <state key="normal" title="Start Session"/>
                                 <connections>
                                     <action selector="startSession:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ZP2-RO-H1c"/>
-                                    <segue destination="ddJ-Bj-qcS" kind="show" id="afr-8T-8Ro"/>
                                 </connections>
                             </button>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="pYC-5w-MpW">
@@ -238,6 +237,7 @@
                         <outlet property="sessionTableview" destination="qTv-jl-Hq2" id="8Yh-iX-sXy"/>
                         <outlet property="taskHistoryTableView" destination="KHb-LZ-g9V" id="EfT-nF-IoZ"/>
                         <outlet property="typeSegControl" destination="dra-aS-fQm" id="741-MN-aOL"/>
+                        <segue destination="ddJ-Bj-qcS" kind="show" identifier="showExpView" id="L1H-HH-5Lh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -256,73 +256,105 @@
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lbv-Zc-QQY">
-                                <rect key="frame" x="24" y="19" width="30" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lbv-Zc-QQY">
+                                <rect key="frame" x="20" y="20" width="30" height="30"/>
                                 <animations/>
                                 <state key="normal" title="Exit"/>
                                 <connections>
                                     <action selector="tapClose:" destination="ddJ-Bj-qcS" eventType="touchUpInside" id="c6p-qT-bNq"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" adjustsImageWhenHighlighted="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2zr-A8-1c5">
-                                <rect key="frame" x="448" y="620" width="128" height="128"/>
-                                <animations/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="128" id="8tQ-H2-fWY"/>
-                                    <constraint firstAttribute="width" constant="128" id="9rx-4H-CjR"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" weight="thin" pointSize="64"/>
-                                <state key="normal" title="TAP"/>
-                                <connections>
-                                    <action selector="tapDown:" destination="ddJ-Bj-qcS" eventType="touchDown" id="9zf-Iz-YmN"/>
-                                    <action selector="tapUp:" destination="ddJ-Bj-qcS" eventType="touchUpInside" id="fer-YV-78m"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="When you are ready, start tapping at your preferred pace:" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y0t-8r-oW2">
-                                <rect key="frame" x="94" y="113" width="578" height="264"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Please position the tap button at a comfortable place." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y0t-8r-oW2">
+                                <rect key="frame" x="60" y="63" width="758" height="142"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DAc-LL-tEP">
-                                <rect key="frame" x="362" y="23" width="300" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DAc-LL-tEP">
+                                <rect key="frame" x="362" y="19" width="300" height="21"/>
                                 <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="300" id="etI-PZ-wAY"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u2R-Tm-YvM">
-                                <rect key="frame" x="688" y="669" width="32" height="30"/>
+                                <rect key="frame" x="921" y="119" width="83" height="30"/>
                                 <animations/>
+                                <fontDescription key="fontDescription" type="system" pointSize="32"/>
                                 <state key="normal" title="Next"/>
                                 <connections>
                                     <action selector="tapNext:" destination="ddJ-Bj-qcS" eventType="touchUpInside" id="a5A-ar-0RK"/>
                                 </connections>
                             </button>
                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" fixedFrame="YES" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="L1X-39-Uzn">
-                                <rect key="frame" x="290" y="495" width="444" height="2"/>
+                                <rect key="frame" x="290" y="236" width="444" height="2"/>
                                 <animations/>
                             </progressView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tLp-ix-GOO">
+                                <rect key="frame" x="20" y="248" width="984" height="500"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenHighlighted="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2zr-A8-1c5">
+                                        <rect key="frame" x="392" y="139" width="200" height="200"/>
+                                        <animations/>
+                                        <gestureRecognizers/>
+                                        <fontDescription key="fontDescription" type="system" weight="thin" pointSize="64"/>
+                                        <size key="titleShadowOffset" width="0.0" height="2.2250738585072014e-308"/>
+                                        <state key="normal" title="TAP" backgroundImage="tapButton">
+                                            <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted" backgroundImage="tapButton">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="tapDown:" destination="ddJ-Bj-qcS" eventType="touchDown" id="9zf-Iz-YmN"/>
+                                            <action selector="tapUp:" destination="ddJ-Bj-qcS" eventType="touchUpInside" id="fer-YV-78m"/>
+                                            <outletCollection property="gestureRecognizers" destination="SOG-md-2On" appends="YES" id="ZL9-LI-WFf"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="500" id="vXb-gb-5lN"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="lbv-Zc-QQY" firstAttribute="top" secondItem="Wck-BI-WFH" secondAttribute="topMargin" constant="19" id="o9M-M8-hnX"/>
-                            <constraint firstAttribute="bottom" secondItem="2zr-A8-1c5" secondAttribute="bottom" constant="20" symbolic="YES" id="sUj-FK-PeB"/>
-                            <constraint firstItem="2zr-A8-1c5" firstAttribute="centerX" secondItem="Wck-BI-WFH" secondAttribute="centerX" id="x74-ky-Pqt"/>
+                            <constraint firstItem="tLp-ix-GOO" firstAttribute="leading" secondItem="lbv-Zc-QQY" secondAttribute="leading" id="AKW-D4-OGd"/>
+                            <constraint firstItem="lbv-Zc-QQY" firstAttribute="leading" secondItem="Wck-BI-WFH" secondAttribute="leadingMargin" id="H5q-Kc-fqj"/>
+                            <constraint firstItem="DAc-LL-tEP" firstAttribute="top" secondItem="Wck-BI-WFH" secondAttribute="topMargin" constant="19" id="Lfa-DE-14z"/>
+                            <constraint firstItem="DAc-LL-tEP" firstAttribute="centerX" secondItem="Wck-BI-WFH" secondAttribute="centerX" id="VNx-En-oe7"/>
+                            <constraint firstItem="DAc-LL-tEP" firstAttribute="centerX" secondItem="tLp-ix-GOO" secondAttribute="centerX" id="XUd-mU-SLX"/>
+                            <constraint firstItem="lbv-Zc-QQY" firstAttribute="top" secondItem="Fef-Nf-u63" secondAttribute="bottom" id="cvG-iO-9IR"/>
+                            <constraint firstAttribute="bottom" secondItem="tLp-ix-GOO" secondAttribute="bottom" constant="20" symbolic="YES" id="xvC-FN-gXW"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="counterLabel" destination="DAc-LL-tEP" id="y57-Nk-WfD"/>
                         <outlet property="instructLabel" destination="Y0t-8r-oW2" id="Stc-T0-Jx2"/>
                         <outlet property="nextButton" destination="u2R-Tm-YvM" id="6so-E1-Y9e"/>
+                        <outlet property="panButtonGestureRecognizer" destination="SOG-md-2On" id="tOL-ds-62F"/>
+                        <outlet property="progressView" destination="L1X-39-Uzn" id="VfU-lM-NG2"/>
                         <outlet property="tapButton" destination="2zr-A8-1c5" id="efe-Lw-aDf"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="K9r-RF-q1o" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <panGestureRecognizer maximumNumberOfTouches="1" id="SOG-md-2On">
+                    <connections>
+                        <action selector="pannedGesture:" destination="ddJ-Bj-qcS" id="PDh-8R-x8A"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="1676" y="429"/>
+            <point key="canvasLocation" x="1602" y="429"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="tapButton" width="36" height="38"/>
+    </resources>
 </document>

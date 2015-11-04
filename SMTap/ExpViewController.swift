@@ -16,9 +16,13 @@ class ExpViewController: UIViewController {
 	@IBOutlet weak var instructLabel: UILabel!
 	@IBOutlet weak var tapButton: UIButton!
 	@IBOutlet weak var nextButton: UIButton!
+	@IBOutlet var panButtonGestureRecognizer: UIPanGestureRecognizer!
+	@IBOutlet weak var progressView: UIProgressView!
 	
 	private var remainTaps: Int = 0
 	private var repeats: Int = 0
+	
+	private var showIntro: Bool = true
 	
 	private let initInstruct = "To start, we would like you to tap at a regular beat with your dominant index finger on the blue button in front of you. Please tap with your dominant index finger while your wrist rests on the blue pad."
 	
@@ -46,12 +50,14 @@ class ExpViewController: UIViewController {
 				instructLabel.text = instruct[curTask.type]![0]
 				tapButton.enabled = true
 				nextButton.enabled = true
+				progressView.setProgress(0, animated: true)
 			case 1:	//begin task
 				instructLabel.text = instruct[curTask.type]![1]
 				engine.startRecording()
 				tapButton.enabled = true
 				nextButton.enabled = false
 				remainTaps = curTask.length
+				progressView.setProgress(0, animated: true)
 			case 2:	// continue tapping
 				instructLabel.text = instructCommon[0]
 			case 3:	// finish tapping
@@ -89,11 +95,19 @@ class ExpViewController: UIViewController {
 	
 	private var taskIndex: Int = 0
 	
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		let movBack = UIImage(named: "tapButton-mov")
+		tapButton.setBackgroundImage(movBack, forState: .Normal)
+		tapButton.setBackgroundImage(movBack, forState: .Highlighted)
+		
+	}
+	
 	override func viewWillAppear(animated: Bool) {
 		taskIndex = 0
 		repeats = curTask.repeats
-		counterLabel.text = "Set \(curTask.repeats - repeats), Task \(taskIndex+1) of \(engine.session.count)"
-		step = 0
+//		step = 0
+		counterLabel.text = ""
 	}
 	
 	@IBAction func tapClose(sender: UIButton) {
@@ -109,9 +123,20 @@ class ExpViewController: UIViewController {
 	}
 	
 	@IBAction func tapNext(sender: UIButton) {
+		guard !showIntro else {
+			updateCounterLabel()
+			step = 0
+			showIntro = false
+			panButtonGestureRecognizer.enabled = false
+			let movBack = UIImage(named: "tapButton")
+			tapButton.setBackgroundImage(movBack, forState: .Normal)
+			tapButton.setBackgroundImage(movBack, forState: .Highlighted)
+			return
+		}
+		
 		switch step {
 		case 3:
-			counterLabel.text = "Set \(curTask.repeats - repeats), Task \(taskIndex+1) of \(engine.session.count)"
+			updateCounterLabel()
 			if repeats == 0 { // starting new task
 				taskIndex += 1
 				repeats = curTask.repeats
@@ -136,8 +161,35 @@ class ExpViewController: UIViewController {
 		if step == 1 { step = 2 }
 		
 		remainTaps -= 1
+//		update progress too:
+		progressView.setProgress(1 - Float(remainTaps) / Float(curTask.length), animated: true)
+		
 		if remainTaps == 0 {
 			step += 1
 		}
+	}
+	
+	@IBAction func pannedGesture(sender: UIPanGestureRecognizer) {
+		let superview = sender.view!.superview!
+		let superviewH = superview.bounds.size.height
+		let myHalfHeight = sender.view!.bounds.size.height/2
+		let translation = sender.translationInView(superview)
+		
+		var center = CGPoint(x:sender.view!.center.x + translation.x,
+			y:sender.view!.center.y + translation.y);
+		
+		//		normal mode: bounds
+		if (center.y - myHalfHeight < 0) {
+			center.y = myHalfHeight
+		} else if (center.y + myHalfHeight > superviewH) {
+			center.y = superviewH - myHalfHeight
+		}
+		sender.view!.center = center
+		sender.setTranslation(CGPoint(x: 0, y: 0), inView: superview)
+	}
+	
+	private func updateCounterLabel() {
+		counterLabel.text = "Set \(curTask.repeats - repeats + 1), Task \(taskIndex+1) of \(engine.session.count)"
+
 	}
 }

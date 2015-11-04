@@ -80,7 +80,26 @@ class ViewController: UIViewController {
 	}
 	
 	@IBAction func startSession(sender: UIButton) {
+		guard engine.session.count > 0 else {
+			let alertVC = UIAlertController(title: "Session is Empty", message: "Can't start an empty sesison, add some tasks or load from history.", preferredStyle: .Alert)
+			let okAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
+			alertVC.addAction(okAction)
+			presentViewController(alertVC, animated: true, completion: nil)
+			return
+		}
+		
+		guard !(idField.text!.isEmpty) else {
+			let alertVC = UIAlertController(title: "No User ID", message: "Please enter a user ID to start a session", preferredStyle: .Alert)
+			let okAction = UIAlertAction(title: "OK", style: .Default) { _ in
+				self.idField.becomeFirstResponder()
+			}
+			alertVC.addAction(okAction)
+			presentViewController(alertVC, animated: true, completion: nil)
+			return
+		}
+		
 		engine.saveSession()
+		performSegueWithIdentifier("showExpView", sender: self)
 	}
 	
 	@IBAction func saveSession(sender: UIButton) {
@@ -133,7 +152,7 @@ extension ViewController: UITableViewDelegate {
 //		load task in "editor"
 		
 		repeatSlider.value = Float(task.repeats)
-//		repeatLabel.text = task.repeats
+		repeatLabel.text = "\(task.repeats)"
 		lengthField.text = "\(task.length)"
 		typeSegControl.selectedSegmentIndex = ExpEngine.TaskType.allValues.indexOf(task.type)!
 	}

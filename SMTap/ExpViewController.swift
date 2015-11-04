@@ -41,7 +41,7 @@ class ExpViewController: UIViewController {
 		"You are done! Press Next to repeat",
 		"You are done! Press Next to continue"]
 	
-	private var curTask: ExpEngine.Task { return engine.session[taskIndex] }
+	private var curTask: ExpEngine.Task { return engine.curTask }
 	
 	private var step: Int = 0 {
 		didSet{
@@ -72,7 +72,7 @@ class ExpViewController: UIViewController {
 					engine.flushRecordToFile()
 					
 //					check if we are finished:
-					if taskIndex == engine.session.count-1 {
+					if engine.currentTaskIndex == engine.session.count-1 {
 						let alertVC = UIAlertController(title: "Session Complete (\(engine.currentRecord.ID))", message: "Please find the experimenter. Saved \(engine.session.count) tasks", preferredStyle: .Alert)
 						let ExVC = self
 						let closeAction = UIAlertAction(title: "OK", style: .Default)
@@ -93,18 +93,15 @@ class ExpViewController: UIViewController {
 		}
 	}
 	
-	private var taskIndex: Int = 0
-	
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		let movBack = UIImage(named: "tapButton-mov")
 		tapButton.setBackgroundImage(movBack, forState: .Normal)
 		tapButton.setBackgroundImage(movBack, forState: .Highlighted)
-		
 	}
 	
 	override func viewWillAppear(animated: Bool) {
-		taskIndex = 0
+		engine.currentTaskIndex = 0
 		repeats = curTask.repeats
 //		step = 0
 		counterLabel.text = ""
@@ -138,7 +135,7 @@ class ExpViewController: UIViewController {
 		case 3:
 			updateCounterLabel()
 			if repeats == 0 { // starting new task
-				taskIndex += 1
+				engine.currentTaskIndex += 1
 				repeats = curTask.repeats
 				step = 0
 			} else {
@@ -197,7 +194,7 @@ class ExpViewController: UIViewController {
 	}
 	
 	private func updateCounterLabel() {
-		counterLabel.text = "Set \(curTask.repeats - repeats + 1), Task \(taskIndex+1) of \(engine.session.count)"
+		counterLabel.text = "Set \(curTask.repeats - repeats + 1), Task \(engine.currentTaskIndex+1) of \(engine.session.count)"
 
 	}
 }

@@ -14,19 +14,54 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	enum DefaultsKey:String {
 		case CurrentSession
 		case TaskHistory
+		case SessionHistory
 	}
 	
 	var window: UIWindow?
 
-
+	private var engine: ExpEngine { return (self.window?.rootViewController as! ViewController).engine }
+	
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-		// Override point for customization after application launch.
+		
+		let defaults = NSUserDefaults.standardUserDefaults()
+
+		if let nsSession = defaults.arrayForKey(DefaultsKey.CurrentSession.rawValue) {
+			for r in nsSession {
+				let rs = r as! NSArray
+				let item = ExpEngine.Task(length: rs[0] as! Int, repeats: rs[1] as! Int, type: ExpEngine.TaskType(rawValue: rs[2] as! String)!)
+				engine.session.append(item)
+			}
+		}
+		
+		if let tasks = defaults.arrayForKey(DefaultsKey.TaskHistory.rawValue) {
+			for r in tasks {
+				let rs = r as! NSArray
+				let item = ExpEngine.Task(length: rs[0] as! Int, repeats: rs[1] as! Int, type: ExpEngine.TaskType(rawValue: rs[2] as! String)!)
+				engine.taskHistory.append(item)
+			}
+		}
+
+		if let sessions = defaults.arrayForKey(DefaultsKey.SessionHistory.rawValue) {
+			for r in sessions {
+				let rs = r as! NSArray
+				var session: [ExpEngine.Task] = []
+				for i in rs {
+					let i = i as! NSArray
+					let item = ExpEngine.Task(length: i[0] as! Int, repeats: i[1] as! Int, type: ExpEngine.TaskType(rawValue: i[2] as! String)!)
+					session.append(item)
+				}
+				engine.sessionHistory.append(session)
+			}
+		}
+
+		
 		return true
 	}
 
 	func applicationWillResignActive(application: UIApplication) {
 		// Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
 		// Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+		saveStates()
 	}
 
 	func applicationDidEnterBackground(application: UIApplication) {
@@ -46,6 +81,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		// Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 	}
 
+	private func saveStates() {
+		let array = engine.session.map{[$0.length, $0.repeats, $0.type.rawValue]} as NSArray
+		NSUserDefaults.standardUserDefaults().setObject(array, forKey: DefaultsKey.CurrentSession.rawValue)
+		
+		let array2 = engine.taskHistory.map{[$0.length, $0.repeats, $0.type.rawValue]} as NSArray
+		NSUserDefaults.standardUserDefaults().setObject(array2, forKey: DefaultsKey.TaskHistory.rawValue)
 
+		let array3 = engine.sessionHistory.map{$0.map {[$0.length, $0.repeats, $0.type.rawValue]} } as NSArray
+		NSUserDefaults.standardUserDefaults().setObject(array3, forKey: DefaultsKey.SessionHistory.rawValue)
+	}
 }
 

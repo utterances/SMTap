@@ -43,7 +43,6 @@ class ExpEngine : NSObject {
 			
 			repeats = Int(fields[1])!
 			length = Int(fields[2])!
-			
 		}
 	}
 	
@@ -70,7 +69,9 @@ class ExpEngine : NSObject {
 	
 //	recording stuff
 	var currentRecord: expRecord!
-
+	var currentTaskIndex: Int = 0
+	var curTask: Task { return session[currentTaskIndex] }
+	
 	var length: Int = 0
 	var repeats: Int = 0
 	
@@ -79,7 +80,6 @@ class ExpEngine : NSObject {
 	private var curRecording = [(type: Tap, dur: Double)]()
 	private var curRecordingsAll = [[(type: Tap, dur: Double)]]()
 	private var startTime: NSTimeInterval = 0
-	private var curPracticeCount:Int = 0
 	
 //	override init() {
 //		super.init()
@@ -192,10 +192,10 @@ class ExpEngine : NSObject {
 	private func saveToFile(seqs:[[(type: Tap, dur: Double)]], outlier:Bool) {
 //		NSLog("salva me")
 		//		make file name
-//		let formatter = NSDateFormatter()
-//		formatter.dateFormat = "yy.MM.dd-hh.mm.ss"
-		var filename = currentRecord.fileName
-		if outlier { filename = "r" + filename }
+		let formatter = NSDateFormatter()
+		formatter.dateFormat = "yy.MM.dd-hh.mm.ss"
+		var filename = currentRecord.fileName + " " + formatter.stringFromDate(NSDate())
+		filename.appendContentsOf(" "+"\(curTask.type.rawValue.characters.first!)\(curTask.repeats)x \(curTask.length)")
 		
 		let paths:NSArray = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
 		let basePath: AnyObject! = (paths.count > 0) ? paths.objectAtIndex(0) : nil
@@ -221,7 +221,7 @@ class ExpEngine : NSObject {
 		}
 		
 //		write interval file
-		lines = "\(curPracticeCount), "
+		lines = ""
 		for seq in seqs {
 			let interval = seqToInterval(seq)
 			for inv in interval {

@@ -85,6 +85,7 @@ class ViewController: UIViewController {
 	
 	@IBAction func saveSession(sender: UIButton) {
 		engine.saveSession()
+		sessionHistoryTableView.reloadData()
 	}
 	
 //	MARK: nav

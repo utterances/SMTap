@@ -22,7 +22,7 @@ class ExpEngine : NSObject {
 		var length: Int
 		var repeats: Int
 		var type: TaskType
-		var description: String { return "\(type): \(repeats)x \(length)" }
+		var description: String { return "\(type.rawValue): \(repeats)x \(length)" }
 		
 		init(length: Int, repeats: Int, type: TaskType) {
 			self.length = length
@@ -255,7 +255,7 @@ class ExpEngine : NSObject {
 		var result = ""
 		for t in session {
 			if result.characters.count > 0 { result += " " }
-			result += "\(t.type.rawValue.characters.first)\(t.repeats)x\(t.length)"
+			result += "\(t.type.rawValue.characters.first!)\(t.repeats)x\(t.length)"
 		}
 		return result
 	}

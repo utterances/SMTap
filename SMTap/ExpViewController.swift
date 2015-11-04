@@ -88,7 +88,10 @@ class ExpViewController: UIViewController {
 	private var taskIndex: Int = 0
 	
 	override func viewWillAppear(animated: Bool) {
-		repeats = engine.repeats
+		taskIndex = 0
+		repeats = curTask.repeats
+		counterLabel.text = "Set \(curTask.repeats - repeats), Task \(taskIndex+1) of \(engine.session.count)"
+		step = 0
 	}
 	
 	@IBAction func tapClose(sender: UIButton) {
@@ -109,6 +112,7 @@ class ExpViewController: UIViewController {
 			counterLabel.text = "Set \(curTask.repeats - repeats), Task \(taskIndex+1) of \(engine.session.count)"
 			if repeats == 0 { // starting new task
 				taskIndex += 1
+				repeats = curTask.repeats
 				step = 0
 			} else {
 				step = 1

@@ -73,7 +73,7 @@ class ExpViewController: UIViewController {
 					
 //					check if we are finished:
 					if taskIndex == engine.session.count-1 {
-						let alertVC = UIAlertController(title: "Finished Session \(engine.currentRecord.ID)", message: "Please find the experimenter. Saved \(engine.session.count) tasks", preferredStyle: .Alert)
+						let alertVC = UIAlertController(title: "Session Complete (\(engine.currentRecord.ID))", message: "Please find the experimenter. Saved \(engine.session.count) tasks", preferredStyle: .Alert)
 						let ExVC = self
 						let closeAction = UIAlertAction(title: "OK", style: .Default)
 							{ finished in
@@ -111,7 +111,7 @@ class ExpViewController: UIViewController {
 	}
 	
 	@IBAction func tapClose(sender: UIButton) {
-		let alertVC = UIAlertController(title: "End This Session? ", message: "Are you sure? Any current unfinished task will be discarded, previously completed task are saved automatically.", preferredStyle: .Alert)
+		let alertVC = UIAlertController(title: "End This Session? ", message: "Are you sure? Any unfinished task will be discarded, previously completed task are saved automatically.", preferredStyle: .Alert)
 		let exitAction = UIAlertAction(title: "Exit", style: .Destructive) { action in
 			self.dismissViewControllerAnimated(true, completion: nil)
 		}
@@ -170,13 +170,14 @@ class ExpViewController: UIViewController {
 	}
 	
 	@IBAction func pannedGesture(sender: UIPanGestureRecognizer) {
-		let superview = sender.view!.superview!
+		let thisView = sender.view!
+		let superview = thisView.superview!
 		let superviewH = superview.bounds.size.height
-		let myHalfHeight = sender.view!.bounds.size.height/2
+		let myHalfHeight = thisView.bounds.size.height/2
 		let translation = sender.translationInView(superview)
 		
-		var center = CGPoint(x:sender.view!.center.x + translation.x,
-			y:sender.view!.center.y + translation.y);
+		var center = CGPoint(x:thisView.center.x + translation.x,
+			y:thisView.center.y + translation.y);
 		
 		//		normal mode: bounds
 		if (center.y - myHalfHeight < 0) {
@@ -184,6 +185,13 @@ class ExpViewController: UIViewController {
 		} else if (center.y + myHalfHeight > superviewH) {
 			center.y = superviewH - myHalfHeight
 		}
+		
+		if (center.x - thisView.bounds.width/2 < 0) {
+			center.x = thisView.bounds.width/2
+		} else if (center.x + thisView.bounds.width/2 > superview.bounds.width) {
+			center.x = superview.bounds.width - thisView.bounds.width/2
+		}
+		
 		sender.view!.center = center
 		sender.setTranslation(CGPoint(x: 0, y: 0), inView: superview)
 	}

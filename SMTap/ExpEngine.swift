@@ -23,6 +23,28 @@ class ExpEngine : NSObject {
 		var repeats: Int
 		var type: TaskType
 		var description: String { return "\(type): \(repeats)x \(length)" }
+		
+		init(length: Int, repeats: Int, type: TaskType) {
+			self.length = length
+			self.repeats = repeats
+			self.type = type
+		}
+		
+		init(inputString:String) {
+			//			s-1-12
+			let fields = inputString.componentsSeparatedByString("-")
+			
+			switch fields[0].lowercaseString {
+				case "s": type = .Slow
+				case "n": type = .Normal
+				case "f": type = .Fast
+			default: type = .Normal
+			}
+			
+			repeats = Int(fields[1])!
+			length = Int(fields[2])!
+			
+		}
 	}
 	
 	struct expRecord {

@@ -209,6 +209,14 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="3yK-c3-XIO"/>
                                 </connections>
                             </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3h7-Mu-ICE">
+                                <rect key="frame" x="581" y="27" width="91" height="30"/>
+                                <animations/>
+                                <state key="normal" title="Save Session"/>
+                                <connections>
+                                    <action selector="saveSession:" destination="BYZ-38-t0r" eventType="touchUpInside" id="m0e-4p-6nU"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -248,20 +256,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lbv-Zc-QQY">
-                                <rect key="frame" x="24" y="19" width="39" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lbv-Zc-QQY">
+                                <rect key="frame" x="24" y="19" width="30" height="30"/>
                                 <animations/>
-                                <state key="normal" title="Close"/>
+                                <state key="normal" title="Exit"/>
                                 <connections>
                                     <action selector="tapClose:" destination="ddJ-Bj-qcS" eventType="touchUpInside" id="c6p-qT-bNq"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u2R-Tm-YvM">
-                                <rect key="frame" x="24" y="491" width="34" height="30"/>
-                                <animations/>
-                                <state key="normal" title="Start"/>
-                                <connections>
-                                    <action selector="tapStart:" destination="ddJ-Bj-qcS" eventType="touchUpInside" id="jx7-f9-VEX"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" misplaced="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2zr-A8-1c5">
@@ -271,22 +271,30 @@
                                     <constraint firstAttribute="height" constant="128" id="8tQ-H2-fWY"/>
                                     <constraint firstAttribute="width" constant="128" id="9rx-4H-CjR"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                                <state key="normal" title="START"/>
+                                <fontDescription key="fontDescription" type="system" weight="thin" pointSize="64"/>
+                                <state key="normal" title="TAP"/>
                                 <connections>
                                     <action selector="tapDown:" destination="ddJ-Bj-qcS" eventType="touchDown" id="9zf-Iz-YmN"/>
                                     <action selector="tapUp:" destination="ddJ-Bj-qcS" eventType="touchUpInside" id="fer-YV-78m"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="When you are ready, start tapping at your preferred pace:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y0t-8r-oW2">
-                                <rect key="frame" x="81" y="129" width="439" height="34"/>
+                                <rect key="frame" x="94" y="113" width="578" height="264"/>
                                 <animations/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Keep Tapping..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bw4-xH-0SS">
-                                <rect key="frame" x="81" y="250" width="439" height="34"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="u2R-Tm-YvM">
+                                <rect key="frame" x="566" y="491" width="32" height="30"/>
+                                <animations/>
+                                <state key="normal" title="Next"/>
+                                <connections>
+                                    <action selector="tapNext:" destination="ddJ-Bj-qcS" eventType="touchUpInside" id="a5A-ar-0RK"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DAc-LL-tEP">
+                                <rect key="frame" x="350" y="23" width="42" height="21"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -296,16 +304,15 @@
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="u2R-Tm-YvM" firstAttribute="leading" secondItem="lbv-Zc-QQY" secondAttribute="leading" id="BZi-nX-D4z"/>
-                            <constraint firstItem="u2R-Tm-YvM" firstAttribute="leading" secondItem="Wck-BI-WFH" secondAttribute="leadingMargin" constant="4" id="Fbo-1h-xoN"/>
-                            <constraint firstItem="u2R-Tm-YvM" firstAttribute="centerY" secondItem="2zr-A8-1c5" secondAttribute="centerY" id="aw6-Zp-J2Q"/>
                             <constraint firstItem="lbv-Zc-QQY" firstAttribute="top" secondItem="Wck-BI-WFH" secondAttribute="topMargin" constant="19" id="o9M-M8-hnX"/>
                             <constraint firstAttribute="bottom" secondItem="2zr-A8-1c5" secondAttribute="bottom" constant="20" symbolic="YES" id="sUj-FK-PeB"/>
                             <constraint firstItem="2zr-A8-1c5" firstAttribute="centerX" secondItem="Wck-BI-WFH" secondAttribute="centerX" id="x74-ky-Pqt"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="startButton" destination="u2R-Tm-YvM" id="3yZ-sh-dPR"/>
+                        <outlet property="counterLabel" destination="DAc-LL-tEP" id="y57-Nk-WfD"/>
+                        <outlet property="instructLabel" destination="Y0t-8r-oW2" id="Stc-T0-Jx2"/>
+                        <outlet property="nextButton" destination="u2R-Tm-YvM" id="6so-E1-Y9e"/>
                         <outlet property="tapButton" destination="2zr-A8-1c5" id="efe-Lw-aDf"/>
                     </connections>
                 </viewController>

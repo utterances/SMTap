@@ -60,6 +60,7 @@ class ViewController: UIViewController {
 	
 	@IBAction func saveTask(sender: UIButton) {
 		if let i = sessionTableview.indexPathForSelectedRow {
+			
 			let task = ExpEngine.Task(length: Int(lengthField.text!)!, repeats: Int(repeatSlider.value), type: ExpEngine.TaskType.allValues[typeSegControl.selectedSegmentIndex])
 			
 			engine.session[i.item] = task
@@ -81,6 +82,11 @@ class ViewController: UIViewController {
 	@IBAction func startSession(sender: UIButton) {
 		engine.saveSession()
 	}
+	
+	@IBAction func saveSession(sender: UIButton) {
+		engine.saveSession()
+	}
+	
 //	MARK: nav
 	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
 		// Get the new view controller using segue.destinationViewController.

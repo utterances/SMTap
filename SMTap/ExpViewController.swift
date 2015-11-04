@@ -20,14 +20,16 @@ class ExpViewController: UIViewController {
 	private var remainTaps: Int = 0
 	private var repeats: Int = 0
 	
+	private let initInstruct = "To start, we would like you to tap at a regular beat with your dominant index finger on the blue button in front of you. Please tap with your dominant index finger while your wrist rests on the blue pad."
+	
 	private let instruct: [ExpEngine.TaskType: [String]] = [
-	ExpEngine.TaskType.Slow : ["In this task you will tap at a slow pace. Try practice tapping the button below. When you are ready to continue, tap Next",
-		"You are ready to begin, start tapping at a slow pace below:"],
+	ExpEngine.TaskType.Slow : ["In this task you will tap as slow as possible while maintaining a smooth and continuous rhythm. Please tap as evenly as possible. Try practice tapping as slow as possible on the button below. When you are ready to continue, tap Next",
+		"You are ready to begin, start tapping as slow as possible below:"],
 		
-	ExpEngine.TaskType.Normal : ["In this task you will tap at pace that is normal. Try practice tapping the button below. When you are ready to continue, tap Next",
-		"You are ready to begin, start tapping at a normal pace:"],
+	ExpEngine.TaskType.Normal : ["In this task you will tap at your favorite, or preferred, pace.  By preferred pace, we mean a rate that is not too fast or too slow, but feels “just right” for you. Please tap as evenly as possible. Try practice tapping at a comfortable pace on the button below. When you are ready to continue, tap Next",
+		"You are ready to begin, start tapping at a comfortable pace:"],
 		
-	ExpEngine.TaskType.Fast : ["In this task you will tap as fast as you can at a steady pace. Try practice tapping the button below. When you are ready to continue, tap Next",
+	ExpEngine.TaskType.Fast : ["In this task you will tap as fast as possible. Try practice tapping as fast as possible on the button below. When you are ready to continue, tap Next",
 		"You are ready to begin, start tapping as fast as you can:"]
 	]
 
@@ -65,7 +67,7 @@ class ExpViewController: UIViewController {
 					
 //					check if we are finished:
 					if taskIndex == engine.session.count-1 {
-						let alertVC = UIAlertController(title: "Finished Session \(engine.currentRecord.ID)", message: "Saved \(engine.session.count) tasks", preferredStyle: .Alert)
+						let alertVC = UIAlertController(title: "Finished Session \(engine.currentRecord.ID)", message: "Please find the experimenter. Saved \(engine.session.count) tasks", preferredStyle: .Alert)
 						let ExVC = self
 						let closeAction = UIAlertAction(title: "OK", style: .Default)
 							{ finished in

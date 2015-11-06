@@ -24,7 +24,8 @@ class ExpViewController: UIViewController {
 	
 	private var showIntro: Bool = true
 	
-	private let initInstruct = "To start, we would like you to tap at a regular beat with your dominant index finger on the blue button in front of you. Please tap with your dominant index finger while your wrist rests on the blue pad."
+	private let initInstruct = "In this session please tap in the center of the button with the index finger of your preferred hand while resting the other fingers on the iPad. Please try to avoid drifting out of the center of the button. The screen is very sensitive, so you can tap comfortably with a fairly light tap. While the iPad isn’t fragile, please avoid very hard taps and do not press down after making contact with the screen. A brief contact is sufficient, and you only need to tap hard enough to clearly feel the impact of your finger on the screen.\nPlease use a consistent tapping style for all of the tapping tasks, regardless of how fast or slow you tap.\n\nTake this time to practice and position the button in a comfortable position."
+	//	Please rest your wrist and fingers (other than index finger) on the table while tapping.
 	
 	private let instruct: [ExpEngine.TaskType: [String]] = [
 	ExpEngine.TaskType.Slow : ["In this task you will tap as slow as possible while maintaining a smooth and continuous rhythm. Please tap as evenly as possible. Try practice tapping as slow as possible on the button below. When you are ready to continue, tap Next",
@@ -105,6 +106,7 @@ class ExpViewController: UIViewController {
 		repeats = curTask.repeats
 //		step = 0
 		counterLabel.text = ""
+		instructLabel.text = initInstruct
 	}
 	
 	@IBAction func tapClose(sender: UIButton) {

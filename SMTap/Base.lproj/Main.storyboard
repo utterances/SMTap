@@ -306,6 +306,7 @@
                                             <action selector="tapDown:" destination="ddJ-Bj-qcS" eventType="touchDown" id="9zf-Iz-YmN"/>
                                             <action selector="tapUp:" destination="ddJ-Bj-qcS" eventType="touchUpInside" id="fer-YV-78m"/>
                                             <outletCollection property="gestureRecognizers" destination="SOG-md-2On" appends="YES" id="ZL9-LI-WFf"/>
+                                            <outletCollection property="gestureRecognizers" destination="1ES-nI-dLf" appends="YES" id="fvm-8q-Dwc"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -350,6 +351,11 @@
                         <action selector="pannedGesture:" destination="ddJ-Bj-qcS" id="PDh-8R-x8A"/>
                     </connections>
                 </panGestureRecognizer>
+                <tapGestureRecognizer cancelsTouchesInView="NO" delaysTouchesEnded="NO" id="1ES-nI-dLf">
+                    <connections>
+                        <action selector="tappedGesture:" destination="ddJ-Bj-qcS" id="9SK-k7-v95"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1602" y="429"/>
         </scene>

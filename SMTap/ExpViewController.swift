@@ -151,6 +151,7 @@ class ExpViewController: UIViewController {
 	@IBAction func tapDown(sender: UIButton) {
 		guard step != 0 else { return }
 		engine.tapDown()
+		
 	}
 	
 	@IBAction func tapUp(sender: UIButton) {
@@ -166,6 +167,14 @@ class ExpViewController: UIViewController {
 		if remainTaps == 0 {
 			step += 1
 		}
+	}
+	
+	@IBAction func tappedGesture(sender: UITapGestureRecognizer) {
+		guard step == 1 || step == 2 else { return }
+		var tapPos = sender.locationInView(tapButton)
+		tapPos.x = tapPos.x - tapButton.bounds.width/2
+		tapPos.y = tapPos.y - tapButton.bounds.height/2
+		print(tapPos)
 	}
 	
 	@IBAction func pannedGesture(sender: UIPanGestureRecognizer) {

@@ -18,6 +18,7 @@ class ViewController: UIViewController {
 	@IBOutlet weak var typeSegControl: UISegmentedControl!
 	@IBOutlet weak var saveButton: UIButton!
 	@IBOutlet weak var addTaskButton: UIButton!
+	@IBOutlet weak var feedbackSwitch: UISwitch!
 	
 	@IBOutlet weak var sessionTableview: UITableView!
 	@IBOutlet weak var sessionHistoryTableView: UITableView!

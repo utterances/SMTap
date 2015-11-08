@@ -51,7 +51,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="KHb-LZ-g9V">
-                                <rect key="frame" x="20" y="377" width="289" height="315"/>
+                                <rect key="frame" x="20" y="374" width="289" height="318"/>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
@@ -76,12 +76,30 @@
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="taskCell" id="11I-DQ-IWu">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="taskCell" textLabel="hb0-Vh-yrY" detailTextLabel="6fu-R3-ApO" style="IBUITableViewCellStyleSubtitle" id="11I-DQ-IWu">
                                         <rect key="frame" x="0.0" y="28" width="356" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="11I-DQ-IWu" id="fsF-ek-EFn">
                                             <rect key="frame" x="0.0" y="0.0" width="356" height="43"/>
                                             <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="hb0-Vh-yrY">
+                                                    <rect key="frame" x="15" y="5" width="32" height="20"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <animations/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="6fu-R3-ApO">
+                                                    <rect key="frame" x="15" y="25" width="41" height="14"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <animations/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
                                             <animations/>
                                         </tableViewCellContentView>
                                         <animations/>
@@ -155,6 +173,9 @@
                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="3" maxY="0.0"/>
                                 <state key="normal" title="CLEAR" image="trash"/>
+                                <connections>
+                                    <action selector="clearSessionHistory:" destination="BYZ-38-t0r" eventType="touchUpInside" id="l3I-t2-97f"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nQm-KU-wUf">
                                 <rect key="frame" x="550" y="63" width="73" height="30"/>
@@ -162,6 +183,9 @@
                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="3" maxY="0.0"/>
                                 <state key="normal" title="CLEAR" image="trash"/>
+                                <connections>
+                                    <action selector="clearSession:" destination="BYZ-38-t0r" eventType="touchUpInside" id="YmB-AM-WCU"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="H9c-zQ-b0E">
                                 <rect key="frame" x="236" y="345" width="73" height="30"/>
@@ -169,6 +193,9 @@
                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="3" maxY="0.0"/>
                                 <state key="normal" title="CLEAR" image="trash"/>
+                                <connections>
+                                    <action selector="clearTasks:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7Is-Do-HvT"/>
+                                </connections>
                             </button>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="40q-bf-O3q">
                                 <rect key="frame" x="648" y="59" width="356" height="4"/>
@@ -279,12 +306,15 @@
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6aq-R6-2bB">
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6aq-R6-2bB">
                                 <rect key="frame" x="648" y="63" width="63" height="30"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="6" maxY="0.0"/>
                                 <state key="normal" title="LOAD" image="load"/>
+                                <connections>
+                                    <action selector="loadSession:" destination="BYZ-38-t0r" eventType="touchUpInside" id="2zT-8j-PCx"/>
+                                </connections>
                             </button>
                         </subviews>
                         <animations/>
@@ -301,6 +331,7 @@
                         <outlet property="feedbackSwitch" destination="pcJ-ca-0UG" id="KOF-eT-rMS"/>
                         <outlet property="idField" destination="pYC-5w-MpW" id="jFI-C8-rsc"/>
                         <outlet property="lengthField" destination="WNM-nA-hRQ" id="92h-OK-z9A"/>
+                        <outlet property="loadSessionButton" destination="6aq-R6-2bB" id="gvB-3p-sBN"/>
                         <outlet property="repeatLabel" destination="eDm-8X-Wuj" id="YwX-Rx-Vfh"/>
                         <outlet property="repeatSlider" destination="dMW-bJ-wpT" id="GRo-kY-fco"/>
                         <outlet property="saveButton" destination="Vs2-fB-c8R" id="QQQ-dm-juP"/>
@@ -336,8 +367,8 @@
                                     <action selector="tapClose:" destination="ddJ-Bj-qcS" eventType="touchUpInside" id="c6p-qT-bNq"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DAc-LL-tEP">
-                                <rect key="frame" x="818" y="20" width="186" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DAc-LL-tEP">
+                                <rect key="frame" x="962" y="20" width="42" height="21"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -374,7 +405,7 @@
                                             <outletCollection property="gestureRecognizers" destination="1ES-nI-dLf" appends="YES" id="fvm-8q-Dwc"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="PRACTICE" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="67H-vI-Ttj">
+                                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="PRACTICE" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="67H-vI-Ttj">
                                         <rect key="frame" x="444" y="8" width="97" height="32"/>
                                         <animations/>
                                         <color key="backgroundColor" red="0.86792612079999998" green="0.48048761490000003" blue="0.027912542219999999" alpha="1" colorSpace="calibratedRGB"/>
@@ -421,6 +452,7 @@
                         <outlet property="instructLabel" destination="Y0t-8r-oW2" id="Stc-T0-Jx2"/>
                         <outlet property="nextButton" destination="u2R-Tm-YvM" id="6so-E1-Y9e"/>
                         <outlet property="panButtonGestureRecognizer" destination="SOG-md-2On" id="tOL-ds-62F"/>
+                        <outlet property="practiceLabel" destination="67H-vI-Ttj" id="ep9-fv-JcA"/>
                         <outlet property="progressView" destination="L1X-39-Uzn" id="VfU-lM-NG2"/>
                         <outlet property="tapButton" destination="2zr-A8-1c5" id="efe-Lw-aDf"/>
                     </connections>
@@ -444,7 +476,7 @@
         <image name="load" width="16" height="16"/>
         <image name="plus" width="20" height="20"/>
         <image name="save" width="16" height="16"/>
-        <image name="shadow" width="11" height="10"/>
+        <image name="shadow" width="13" height="14"/>
         <image name="tapButton" width="36" height="38"/>
         <image name="trash" width="17" height="17"/>
     </resources>

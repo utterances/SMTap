@@ -44,13 +44,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		if let sessions = defaults.arrayForKey(DefaultsKey.SessionHistory.rawValue) {
 			for r in sessions {
 				let rs = r as! NSArray
-				var session: [ExpEngine.Task] = []
-				for i in rs {
+				var tasks: [ExpEngine.Task] = []
+				for i in rs[0] as! NSArray {
 					let i = i as! NSArray
 					let item = ExpEngine.Task(length: i[0] as! Int, repeats: i[1] as! Int, type: ExpEngine.TaskType(rawValue: i[2] as! String)!)
-					session.append(item)
+					tasks.append(item)
 				}
-				engine.sessionHistory.append(session)
+				engine.sessionHistory.append(ExpEngine.Session(tasks: tasks, date: rs[1] as! NSDate))
 			}
 		}
 
@@ -88,7 +88,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		let array2 = engine.taskHistory.map{[$0.length, $0.repeats, $0.type.rawValue]} as NSArray
 		NSUserDefaults.standardUserDefaults().setObject(array2, forKey: DefaultsKey.TaskHistory.rawValue)
 
-		let array3 = engine.sessionHistory.map{$0.map {[$0.length, $0.repeats, $0.type.rawValue]} } as NSArray
+		let array3 = engine.sessionHistory.map{
+			[$0.tasks.map{[$0.length, $0.repeats, $0.type.rawValue]}, $0.date] } as NSArray
 		NSUserDefaults.standardUserDefaults().setObject(array3, forKey: DefaultsKey.SessionHistory.rawValue)
 	}
 }

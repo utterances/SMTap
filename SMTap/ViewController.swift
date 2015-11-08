@@ -20,6 +20,8 @@ class ViewController: UIViewController {
 	@IBOutlet weak var addTaskButton: UIButton!
 	@IBOutlet weak var feedbackSwitch: UISwitch!
 	
+	@IBOutlet weak var loadSessionButton: UIButton!
+	
 	@IBOutlet weak var sessionTableview: UITableView!
 	@IBOutlet weak var sessionHistoryTableView: UITableView!
 	@IBOutlet weak var taskHistoryTableView: UITableView!
@@ -34,6 +36,7 @@ class ViewController: UIViewController {
 	override func viewWillAppear(animated: Bool) {
 		super.viewWillAppear(animated)
 		sessionTableview.setEditing(true, animated: false)
+		sessionHistoryTableView.reloadData()
 	}
 	
 	override func didReceiveMemoryWarning() {
@@ -66,7 +69,7 @@ class ViewController: UIViewController {
 			
 			engine.session[i.item] = task
 			engine.addToHistory(task)
-			sessionTableview.reloadRowsAtIndexPaths([i], withRowAnimation: .Left)
+			sessionTableview.reloadRowsAtIndexPaths([i], withRowAnimation: .Right)
 		}
 		
 		sender.enabled = false
@@ -100,12 +103,48 @@ class ViewController: UIViewController {
 		}
 		
 		engine.saveSession()
+		engine.showFeedback = feedbackSwitch.on
 		performSegueWithIdentifier("showExpView", sender: self)
 	}
 	
 	@IBAction func saveSession(sender: UIButton) {
 		engine.saveSession()
 		sessionHistoryTableView.reloadData()
+	}
+	
+	@IBAction func clearTasks(sender: UIButton) {
+		guard !engine.taskHistory.isEmpty else { return }
+		clearTable(taskHistoryTableView, sender: sender)
+			{ self.engine.taskHistory.removeAll() }
+	}
+	
+	@IBAction func clearSession(sender: UIButton) {
+		guard !engine.session.isEmpty else { return }
+		clearTable(sessionTableview, sender: sender)
+			{ self.engine.session.removeAll() }
+	}
+
+	@IBAction func clearSessionHistory(sender: UIButton) {
+		guard !engine.sessionHistory.isEmpty else { return }
+		clearTable(sessionHistoryTableView, sender: sender)
+			{ self.engine.sessionHistory.removeAll() }
+	}
+	
+	private func clearTable(tableView: UITableView, sender: UIView, clearBlock: ()->Void ) {
+		let confirmVC = UIAlertController(title: "", message: "Clear all?", preferredStyle: .ActionSheet)
+		let clearAction = UIAlertAction(title: "Clear", style: .Destructive) { _ in
+			clearBlock()
+			tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: .Automatic)
+		}
+		
+		let cancelAction = UIAlertAction(title:"Cancel", style: .Cancel){_ in }
+		
+		confirmVC.addAction(clearAction)
+		confirmVC.addAction(cancelAction)
+		confirmVC.popoverPresentationController?.sourceView = sender
+		confirmVC.popoverPresentationController?.sourceRect = CGRect(origin:CGPoint(x: sender.frame.width/2, y: sender.frame.height), size: CGSizeZero)
+		confirmVC.popoverPresentationController?.permittedArrowDirections = .Up
+		presentViewController(confirmVC, animated: true, completion: nil)
 	}
 	
 //	MARK: nav
@@ -119,6 +158,14 @@ class ViewController: UIViewController {
 			(segue.destinationViewController as! ExpViewController).engine = engine
 		}
 	}
+	
+	@IBAction func loadSession(sender: UIButton) {
+		if let i = sessionHistoryTableView.indexPathForSelectedRow {
+			engine.session = engine.sessionHistory[i.item].tasks
+			sessionTableview.reloadSections(NSIndexSet(index: 0), withRowAnimation: .Left)
+		}
+	}
+	
 }
 
 extension ViewController: UITextFieldDelegate {
@@ -147,6 +194,9 @@ extension ViewController: UITableViewDelegate {
 			}
 			saveButton.enabled = false
 			task = engine.taskHistory[indexPath.item]
+		case sessionHistoryTableView:
+			loadSessionButton.enabled = true
+			return
 		default: return
 		}
 		
@@ -191,7 +241,8 @@ extension ViewController: UITableViewDataSource {
 		case sessionTableview:
 			cell.textLabel?.text = engine.session[indexPath.item].description
 		case sessionHistoryTableView:
-			cell.textLabel?.text = engine.summarize(engine.sessionHistory[indexPath.item])
+			cell.textLabel?.text = engine.sessionHistory[indexPath.item].description
+			cell.detailTextLabel?.text = engine.sessionHistory[indexPath.item].dateString
 		case taskHistoryTableView:
 			cell.textLabel?.text = engine.taskHistory[indexPath.item].description
 		default: break

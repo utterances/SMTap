@@ -46,6 +46,27 @@ class ExpEngine : NSObject {
 		}
 	}
 	
+	struct Session: CustomStringConvertible {
+		var tasks: [Task]
+		var date: NSDate
+		
+		var description: String {
+			var result = ""
+			for t in tasks {
+				if result.characters.count > 0 { result += " " }
+				result += "\(t.type.rawValue.characters.first!)\(t.repeats)x\(t.length)"
+			}
+			return result
+		}
+		
+		var dateString: String {
+			let dateFormat = NSDateFormatter.dateFormatFromTemplate("EEEE, MMM d", options: 0, locale: NSLocale.currentLocale())
+			let dateformatter = NSDateFormatter()
+			dateformatter.dateFormat = dateFormat
+			return dateformatter.stringFromDate(date)
+		}
+	}
+	
 	struct expRecord {
 		var ID: String
 		var seq: [[Double]]!
@@ -65,7 +86,9 @@ class ExpEngine : NSObject {
 		didSet { if taskHistory.count > 10 { taskHistory.removeLast() } }
 	}
 	var session: [Task] = [Task]()
-	var sessionHistory = [[Task]]()
+	var sessionHistory = [Session]()
+	
+	var showFeedback: Bool = true
 	
 //	recording stuff
 	var currentRecord: expRecord!
@@ -251,15 +274,6 @@ class ExpEngine : NSObject {
 	
 //	MARK: - session and tasks
 	
-	func summarize(session: [Task]) -> String {
-		var result = ""
-		for t in session {
-			if result.characters.count > 0 { result += " " }
-			result += "\(t.type.rawValue.characters.first!)\(t.repeats)x\(t.length)"
-		}
-		return result
-	}
-	
 	func addTask(length: Int, repeats: Int, type: TaskType) {
 		let task = Task(length: length, repeats: repeats, type: type)
 		session.append(task)
@@ -275,10 +289,10 @@ class ExpEngine : NSObject {
 	
 	func saveSession() {
 		let saved = sessionHistory.contains {
-			guard $0.count == session.count else { return false }
+			guard $0.tasks.count == session.count else { return false }
 			
-			for i in 0..<$0.count {
-				if $0[i].length != session[i].length || $0[i].repeats != session[i].repeats || $0[i].type == session[i].type {
+			for i in 0..<$0.tasks.count {
+				if $0.tasks[i].length != session[i].length || $0.tasks[i].repeats != session[i].repeats || $0.tasks[i].type != session[i].type {
 					return false
 				}
 			}
@@ -287,7 +301,7 @@ class ExpEngine : NSObject {
 		
 		guard !saved else { return }
 		
-		sessionHistory.append(session)
+		sessionHistory.append(Session(tasks: session, date: NSDate()))
 	}
 }
 

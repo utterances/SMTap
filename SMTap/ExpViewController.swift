@@ -18,6 +18,7 @@ class ExpViewController: UIViewController {
 	@IBOutlet weak var nextButton: UIButton!
 	@IBOutlet var panButtonGestureRecognizer: UIPanGestureRecognizer!
 	@IBOutlet weak var progressView: UIProgressView!
+	@IBOutlet weak var practiceLabel: UILabel!
 	
 	private var remainTaps: Int = 0
 	private var repeats: Int = 0
@@ -51,12 +52,14 @@ class ExpViewController: UIViewController {
 				instructLabel.text = instruct[curTask.type]![0]
 				tapButton.enabled = true
 				nextButton.enabled = true
+				practiceLabel.hidden = false
 				progressView.setProgress(0, animated: true)
 			case 1:	//begin task
 				instructLabel.text = instruct[curTask.type]![1]
 				engine.startRecording()
 				tapButton.enabled = true
 				nextButton.enabled = false
+				practiceLabel.hidden = true
 				remainTaps = curTask.length
 				progressView.setProgress(0, animated: true)
 			case 2:	// continue tapping
@@ -104,9 +107,13 @@ class ExpViewController: UIViewController {
 	override func viewWillAppear(animated: Bool) {
 		engine.currentTaskIndex = 0
 		repeats = curTask.repeats
-//		step = 0
 		counterLabel.text = ""
 		instructLabel.text = initInstruct
+		if engine.showFeedback {
+			tapButton.setTitleColor(UIColor.whiteColor(), forState: .Highlighted)
+		} else {
+			tapButton.setTitleColor(UIColor.darkGrayColor(), forState: .Highlighted)
+		}
 	}
 	
 	@IBAction func tapClose(sender: UIButton) {

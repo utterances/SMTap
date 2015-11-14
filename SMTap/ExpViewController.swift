@@ -53,6 +53,8 @@ class ExpViewController: UIViewController {
 				tapButton.enabled = true
 				nextButton.enabled = true
 				practiceLabel.hidden = false
+				progressView.hidden = false
+				remainTaps = 5
 				progressView.setProgress(0, animated: true)
 			case 1:	//begin task
 				instructLabel.text = instruct[curTask.type]![1]
@@ -162,14 +164,28 @@ class ExpViewController: UIViewController {
 	}
 	
 	@IBAction func tapUp(sender: UIButton) {
-		guard step != 0 else { return }
+		remainTaps -= 1
+		
+		guard step != 0 else {
+			if remainTaps == 0 {
+				remainTaps = 5
+			}
+			//		update progress too:
+			progressView.setProgress(1 - Float(remainTaps) / 5, animated: true)
+
+			return
+		}
+		//		update progress too:
+		progressView.setProgress(1 - Float(remainTaps) / Float(curTask.length), animated: true)
+
+		
 		engine.tapUp()
 		
 		if step == 1 { step = 2 }
 		
-		remainTaps -= 1
+//		remainTaps -= 1
 //		update progress too:
-		progressView.setProgress(1 - Float(remainTaps) / Float(curTask.length), animated: true)
+//		progressView.setProgress(1 - Float(remainTaps) / Float(curTask.length), animated: true)
 		
 		if remainTaps == 0 {
 			step += 1

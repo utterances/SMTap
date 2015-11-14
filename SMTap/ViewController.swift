@@ -30,6 +30,7 @@ class ViewController: UIViewController {
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		idField.delegate = self
 		// Do any additional setup after loading the view, typically from a nib.
 	}
 
@@ -170,12 +171,19 @@ class ViewController: UIViewController {
 
 extension ViewController: UITextFieldDelegate {
 	func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+		guard textField == lengthField else { return true }
 		let numbers = "0123456789"
 		for c in string.characters {
 			if !numbers.characters.contains(c) { return false }
 		}
 		return true
 	}
+	
+	func textFieldShouldReturn(textField: UITextField) -> Bool {
+		textField.resignFirstResponder()
+		return false
+	}
+
 }
 
 extension ViewController: UITableViewDelegate {

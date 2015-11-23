@@ -19,13 +19,15 @@ class ExpViewController: UIViewController {
 	@IBOutlet var panButtonGestureRecognizer: UIPanGestureRecognizer!
 	@IBOutlet weak var progressView: UIProgressView!
 	@IBOutlet weak var practiceLabel: UILabel!
+	@IBOutlet weak var instructImg: UIImageView!
 	
 	private var remainTaps: Int = 0
 	private var repeats: Int = 0
 	
-	private var showIntro: Bool = true
+	private var showIntroSteps: Int = 0
 	
-	private let initInstruct = "In this session please tap in the center of the button with the index finger of your preferred hand while resting the other fingers on the iPad. Please try to avoid drifting out of the center of the button. The screen is very sensitive, so you can tap comfortably with a fairly light tap. While the iPad isn’t fragile, please avoid very hard taps and do not press down after making contact with the screen. A brief contact is sufficient, and you only need to tap hard enough to clearly feel the impact of your finger on the screen.\nPlease use a consistent tapping style for all of the tapping tasks, regardless of how fast or slow you tap.\n\nTake this time to practice and position the button in a comfortable position."
+	private let initInstruct = ["In this session you will tap in the center of the button with the index finger of your preferred hand while resting the other fingers on the iPad. \n\nThe screen is very sensitive, so you can tap fairly lightly. While the iPad isn’t fragile, please avoid hard taps and do not press down after making contact with the screen. A brief contact is sufficient, and you only need to tap hard enough to clearly feel the impact of your finger on the screen.",
+	"Please use a consistent tapping style for all of the tapping tasks, regardless of how fast or slow you tap. While tapping, try avoid drifting from the center of the button.\n\nTake this time to practice and move the button to a comfortable position."]
 	//	Please rest your wrist and fingers (other than index finger) on the table while tapping.
 	
 	private let instruct: [ExpEngine.TaskType: [String]] = [
@@ -56,6 +58,7 @@ class ExpViewController: UIViewController {
 				progressView.hidden = false
 				remainTaps = 5
 				progressView.setProgress(0, animated: true)
+				instructImg.hidden = true
 			case 1:	//begin task
 				instructLabel.text = instruct[curTask.type]![1]
 				engine.startRecording()
@@ -64,12 +67,16 @@ class ExpViewController: UIViewController {
 				practiceLabel.hidden = true
 				remainTaps = curTask.length
 				progressView.setProgress(0, animated: true)
+				instructImg.hidden = false
+				instructImg.image = UIImage(named: "go")
 			case 2:	// continue tapping
 				instructLabel.text = instructCommon[0]
 			case 3:	// finish tapping
 				engine.stopRecording()
 				tapButton.enabled = false
 				nextButton.enabled = true
+				
+				instructImg.image = UIImage(named: "done")
 				
 				repeats -= 1
 				if repeats == 0 {
@@ -110,7 +117,8 @@ class ExpViewController: UIViewController {
 		engine.currentTaskIndex = 0
 		repeats = curTask.repeats
 		counterLabel.text = ""
-		instructLabel.text = initInstruct
+		instructLabel.text = initInstruct[0]
+		instructImg.hidden = true
 		if engine.showFeedback {
 			tapButton.setTitleColor(UIColor.whiteColor(), forState: .Highlighted)
 		} else {
@@ -131,14 +139,19 @@ class ExpViewController: UIViewController {
 	}
 	
 	@IBAction func tapNext(sender: UIButton) {
-		guard !showIntro else {
-			updateCounterLabel()
-			step = 0
-			showIntro = false
-			panButtonGestureRecognizer.enabled = false
-			let movBack = UIImage(named: "tapButton")
-			tapButton.setBackgroundImage(movBack, forState: .Normal)
-			tapButton.setBackgroundImage(movBack, forState: .Highlighted)
+		guard showIntroSteps > 1 else {
+			showIntroSteps += 1
+			
+			if showIntroSteps > 1 {
+				updateCounterLabel()
+				step = 0
+				panButtonGestureRecognizer.enabled = false
+				let movBack = UIImage(named: "tapButton")
+				tapButton.setBackgroundImage(movBack, forState: .Normal)
+				tapButton.setBackgroundImage(movBack, forState: .Highlighted)
+			} else {
+				instructLabel.text = initInstruct[showIntroSteps]
+			}
 			return
 		}
 		
@@ -167,12 +180,15 @@ class ExpViewController: UIViewController {
 		remainTaps -= 1
 		
 		guard step != 0 else {
-			if remainTaps == 0 {
+			let animated: Bool
+			if remainTaps == -1 {
 				remainTaps = 5
+				animated = false
+			} else {
+				animated = true
 			}
-			//		update progress too:
-			progressView.setProgress(1 - Float(remainTaps) / 5, animated: true)
-
+				//		update progress too:
+			progressView.setProgress(1 - Float(remainTaps) / 5, animated: animated)
 			return
 		}
 		//		update progress too:

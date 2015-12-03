@@ -2,12 +2,12 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "Bitmap.png",
+      "filename" : "go_image.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "Bitmap-1.png",
+      "filename" : "go_image-1.png",
       "scale" : "2x"
     },
     {

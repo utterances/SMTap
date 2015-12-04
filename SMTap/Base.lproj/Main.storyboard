@@ -457,6 +457,7 @@
                     </view>
                     <connections>
                         <outlet property="counterLabel" destination="DAc-LL-tEP" id="y57-Nk-WfD"/>
+                        <outlet property="instructBigLabel" destination="mIU-Mw-0BC" id="VwK-Oc-W1k"/>
                         <outlet property="instructImg" destination="9DE-TK-xVg" id="aYz-OV-P3q"/>
                         <outlet property="instructLabel" destination="Y0t-8r-oW2" id="Stc-T0-Jx2"/>
                         <outlet property="nextButton" destination="u2R-Tm-YvM" id="6so-E1-Y9e"/>

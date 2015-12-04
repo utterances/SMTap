@@ -14,6 +14,8 @@ class ExpViewController: UIViewController {
 
 	@IBOutlet weak var counterLabel: UILabel!
 	@IBOutlet weak var instructLabel: UILabel!
+	@IBOutlet weak var instructBigLabel: UILabel!
+	
 	@IBOutlet weak var tapButton: UIButton!
 	@IBOutlet weak var nextButton: UIButton!
 	@IBOutlet var panButtonGestureRecognizer: UIPanGestureRecognizer!
@@ -51,7 +53,9 @@ class ExpViewController: UIViewController {
 		didSet{
 			switch step {
 			case 0:	//begin instruct
-				instructLabel.text = instruct[curTask.type]![0]
+				instructBigLabel.hidden = false
+				instructBigLabel.text = instruct[curTask.type]![0]
+				instructLabel.hidden = true
 				tapButton.enabled = true
 				nextButton.enabled = true
 				practiceLabel.hidden = false
@@ -60,6 +64,8 @@ class ExpViewController: UIViewController {
 				progressView.setProgress(0, animated: true)
 				instructImg.hidden = true
 			case 1:	//begin task
+				instructBigLabel.hidden = true
+				instructLabel.hidden = false
 				instructLabel.text = instruct[curTask.type]![1]
 				engine.startRecording()
 				tapButton.enabled = true
@@ -117,7 +123,9 @@ class ExpViewController: UIViewController {
 		engine.currentTaskIndex = 0
 		repeats = curTask.repeats
 		counterLabel.text = ""
-		instructLabel.text = initInstruct[0]
+		instructBigLabel.text = initInstruct[0]
+		instructLabel.hidden = true
+		instructBigLabel.hidden = false
 		instructImg.hidden = true
 		if engine.showFeedback {
 			tapButton.setTitleColor(UIColor.whiteColor(), forState: .Highlighted)
@@ -150,7 +158,7 @@ class ExpViewController: UIViewController {
 				tapButton.setBackgroundImage(movBack, forState: .Normal)
 				tapButton.setBackgroundImage(movBack, forState: .Highlighted)
 			} else {
-				instructLabel.text = initInstruct[showIntroSteps]
+				instructBigLabel.text = initInstruct[showIntroSteps]
 			}
 			return
 		}

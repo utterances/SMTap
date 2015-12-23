@@ -54,7 +54,7 @@
                                         <rect key="frame" x="0.0" y="28" width="289" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="kXi-HV-pks" id="TQ7-As-3J7">
-                                            <rect key="frame" x="0.0" y="0.0" width="289" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="289" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -118,7 +118,7 @@
                                         <rect key="frame" x="0.0" y="28" width="290" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="YXt-hK-1Wi" id="h7e-LG-rS8">
-                                            <rect key="frame" x="0.0" y="0.0" width="290" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="290" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -226,14 +226,6 @@
                                             <outlet property="delegate" destination="BYZ-38-t0r" id="iiz-gx-ZLH"/>
                                         </connections>
                                     </textField>
-                                    <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" translatesAutoresizingMaskIntoConstraints="NO" id="dra-aS-fQm">
-                                        <rect key="frame" x="13" y="144" width="273" height="29"/>
-                                        <segments>
-                                            <segment title="Slow"/>
-                                            <segment title="Comfortable"/>
-                                            <segment title="Fast"/>
-                                        </segments>
-                                    </segmentedControl>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vs2-fB-c8R">
                                         <rect key="frame" x="8" y="198" width="132" height="22"/>
                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
@@ -263,6 +255,15 @@
                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" translatesAutoresizingMaskIntoConstraints="NO" id="dra-aS-fQm">
+                                        <rect key="frame" x="13" y="144" width="273" height="29"/>
+                                        <segments>
+                                            <segment title="Slow"/>
+                                            <segment title="Comfort"/>
+                                            <segment title="Fast"/>
+                                            <segment title="Sync"/>
+                                        </segments>
+                                    </segmentedControl>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </view>

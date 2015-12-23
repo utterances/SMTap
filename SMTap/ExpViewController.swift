@@ -36,11 +36,14 @@ class ExpViewController: UIViewController {
 	ExpEngine.TaskType.Slow : ["In this task you will tap as slow as possible while maintaining a smooth and continuous rhythm. Please tap as evenly as possible. Try practice tapping as slow as possible on the button below. When you are ready to continue, tap Next",
 		"You are ready to begin, start tapping as slow as possible below:"],
 		
-	ExpEngine.TaskType.Comfortable : ["In this task you will tap at your favorite, or preferred, pace.  By preferred pace, we mean a rate that is not too fast or too slow, but feels “just right” for you. Please tap as evenly as possible. Try practice tapping at a comfortable pace on the button below. When you are ready to continue, tap Next",
+	ExpEngine.TaskType.Normal : ["In this task you will tap at your favorite, or preferred, pace.  By preferred pace, we mean a rate that is not too fast or too slow, but feels “just right” for you. Please tap as evenly as possible. Try practice tapping at a comfortable pace on the button below. When you are ready to continue, tap Next",
 		"You are ready to begin, start tapping at a comfortable pace:"],
 		
 	ExpEngine.TaskType.Fast : ["In this task you will tap as fast as possible. Try practice tapping as fast as possible on the button below. When you are ready to continue, tap Next",
-		"You are ready to begin, start tapping as fast as you can:"]
+		"You are ready to begin, start tapping as fast as you can:"],
+        
+    ExpEngine.TaskType.Sync : ["In this task you will tap as fast as possible. Try practice tapping as fast as possible on the button below. When you are ready to continue, tap Next",
+        "You are ready to begin, start tapping as fast as you can:"]
 	]
 
 	private let instructCommon = ["Keep tapping...",
@@ -221,7 +224,7 @@ class ExpViewController: UIViewController {
 		var tapPos = sender.locationInView(tapButton)
 		tapPos.x = tapPos.x - tapButton.bounds.width/2
 		tapPos.y = tapPos.y - tapButton.bounds.height/2
-		print(tapPos)
+		engine.tapPos(tapPos)
 	}
 	
 	@IBAction func pannedGesture(sender: UIPanGestureRecognizer) {

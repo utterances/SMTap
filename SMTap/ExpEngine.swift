@@ -12,10 +12,11 @@ import AVFoundation
 class ExpEngine : NSObject {
 
 	enum TaskType: String {
-		case Slow
-		case Comfortable
-		case Fast
-		static let allValues = [Slow, Comfortable, Fast]
+        case Slow = "slow"
+        case Normal = "comfortable"
+        case Fast = "fast"
+        case Sync = "sync"
+		static let allValues = [Slow, Normal, Fast, Sync]
 	}
 	
 	struct Task: CustomStringConvertible {
@@ -36,9 +37,10 @@ class ExpEngine : NSObject {
 			
 			switch fields[0].lowercaseString {
 				case "s": type = .Slow
-				case "n": type = .Comfortable  //FIXME: check initial letter used for saving to match what's loaded
+				case "n": type = .Normal  //FIXME: check initial letter used for saving to match what's loaded
 				case "f": type = .Fast
-			default: type = .Comfortable
+                case "x": type = .Sync
+			default: type = .Normal
 			}
 			
 			repeats = Int(fields[1])!
@@ -79,6 +81,7 @@ class ExpEngine : NSObject {
 	enum Tap: String {
 		case Up
 		case Down
+        case Pos
 	}
 	
 // storage:
@@ -92,7 +95,7 @@ class ExpEngine : NSObject {
 	
 //	recording stuff
 	var currentRecord: expRecord!
-	var currentTaskIndex: Int = 0
+ 	var currentTaskIndex: Int = 0
 	var curTask: Task { return session[currentTaskIndex] }
 	
 	var length: Int = 0
@@ -102,6 +105,8 @@ class ExpEngine : NSObject {
 	
 	private var curRecording = [(type: Tap, dur: Double)]()
 	private var curRecordingsAll = [[(type: Tap, dur: Double)]]()
+    private var curPos = [CGPoint]()
+    private var curPosAll = [[CGPoint]]()
 	private var startTime: NSTimeInterval = 0
 	
 //	override init() {
@@ -156,6 +161,7 @@ class ExpEngine : NSObject {
 		print("started recording")
 		isRecording = true
 		curRecording.removeAll(keepCapacity: true)
+        curPos.removeAll(keepCapacity: true)
 	}
 	
 	func stopRecording() {
@@ -181,6 +187,8 @@ class ExpEngine : NSObject {
 //		save to record stash, save to file later
 		curRecordingsAll.append(curRecording)
 		curRecording.removeAll()
+        curPosAll.append(curPos)
+        curPos.removeAll()
 	}
 	
 	func tapUp() {
@@ -191,6 +199,11 @@ class ExpEngine : NSObject {
 		saveEvent(.Down, time: NSDate().timeIntervalSince1970)
 	}
 	
+    func tapPos(pos: CGPoint) {
+        saveEvent(.Pos, time: NSDate().timeIntervalSince1970)
+        curPos.append(pos)
+    }
+    
 	private func saveEvent(type: Tap, time: NSTimeInterval) {
 		guard isRecording else {
 			return	// sanity check here, shouldn't really happen
@@ -212,7 +225,7 @@ class ExpEngine : NSObject {
 		}
 	}
 	
-	private func saveToFile(seqs:[[(type: Tap, dur: Double)]], outlier:Bool) {
+    private func saveToFile(seqs:[[(type: Tap, dur: Double)]], posSeqs:[[CGPoint]], outlier:Bool) {
 //		NSLog("salva me")
 		//		make file name
 		let formatter = NSDateFormatter()
@@ -230,12 +243,18 @@ class ExpEngine : NSObject {
 		let fullpath2 = baseName + ".csv"
 		
 		var lines = ""
-		for seq in seqs {
+		for (seq, pos) in zip(seqs, posSeqs) {
+            var i = 0
 			for e in seq {
-				lines += "\(e.type), \(e.dur)\n"
+                if e.type == .Pos {
+                    lines += "\(e.type), \(e.dur), \(pos[i].x), \(pos[i].y)\n"
+                    i += 1
+                } else {
+                    lines += "\(e.type), \(e.dur)\n"
+                }
 			}
 			lines += "\n"
-		}
+ 		}
 		
 		do {
 			try lines.writeToFile(fullpath1, atomically: false, encoding: NSUTF8StringEncoding)
@@ -262,12 +281,10 @@ class ExpEngine : NSObject {
 	}
 	
 	func flushRecordToFile(save save:Bool = true) {
-//		let outlier = isOutlierFilter()
 //		save current record to disk
 		if save {
-			saveToFile(curRecordingsAll, outlier:false)
+            saveToFile(curRecordingsAll, posSeqs: curPosAll, outlier:false)
 		}
-		
 		curRecordingsAll.removeAll(keepCapacity: true)
 	}
 	

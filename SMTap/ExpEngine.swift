@@ -13,9 +13,9 @@ class ExpEngine : NSObject {
 
 	enum TaskType: String {
 		case Slow
-		case Normal
+		case Comfortable
 		case Fast
-		static let allValues = [Slow, Normal, Fast]
+		static let allValues = [Slow, Comfortable, Fast]
 	}
 	
 	struct Task: CustomStringConvertible {
@@ -36,9 +36,9 @@ class ExpEngine : NSObject {
 			
 			switch fields[0].lowercaseString {
 				case "s": type = .Slow
-				case "n": type = .Normal
+				case "n": type = .Comfortable  //FIXME: check initial letter used for saving to match what's loaded
 				case "f": type = .Fast
-			default: type = .Normal
+			default: type = .Comfortable
 			}
 			
 			repeats = Int(fields[1])!

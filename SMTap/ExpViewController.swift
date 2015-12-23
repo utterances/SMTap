@@ -36,7 +36,7 @@ class ExpViewController: UIViewController {
 	ExpEngine.TaskType.Slow : ["In this task you will tap as slow as possible while maintaining a smooth and continuous rhythm. Please tap as evenly as possible. Try practice tapping as slow as possible on the button below. When you are ready to continue, tap Next",
 		"You are ready to begin, start tapping as slow as possible below:"],
 		
-	ExpEngine.TaskType.Normal : ["In this task you will tap at your favorite, or preferred, pace.  By preferred pace, we mean a rate that is not too fast or too slow, but feels “just right” for you. Please tap as evenly as possible. Try practice tapping at a comfortable pace on the button below. When you are ready to continue, tap Next",
+	ExpEngine.TaskType.Comfortable : ["In this task you will tap at your favorite, or preferred, pace.  By preferred pace, we mean a rate that is not too fast or too slow, but feels “just right” for you. Please tap as evenly as possible. Try practice tapping at a comfortable pace on the button below. When you are ready to continue, tap Next",
 		"You are ready to begin, start tapping at a comfortable pace:"],
 		
 	ExpEngine.TaskType.Fast : ["In this task you will tap as fast as possible. Try practice tapping as fast as possible on the button below. When you are ready to continue, tap Next",
@@ -252,7 +252,6 @@ class ExpViewController: UIViewController {
 	}
 	
 	private func updateCounterLabel() {
-		counterLabel.text = "Set \(curTask.repeats - repeats + 1), Task \(engine.currentTaskIndex+1) of \(engine.session.count)"
-
+		counterLabel.text = "Task \(engine.currentTaskIndex+1) of \(engine.session.count), Trial \(curTask.repeats - repeats + 1)"
 	}
 }

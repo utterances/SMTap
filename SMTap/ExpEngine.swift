@@ -85,6 +85,8 @@ class ExpEngine : NSObject {
 	}
 	
 // storage:
+    var seeds: [[Int]] = [[Int]]()
+    
 	var taskHistory: [Task] = [Task]() {
 		didSet { if taskHistory.count > 10 { taskHistory.removeLast() } }
 	}
@@ -118,92 +120,26 @@ class ExpEngine : NSObject {
         
         let seedfilepath = basePath.stringByAppendingPathComponent("seeds.csv")
         
+//        print(seedfilepath)
+        
         var text: String
         do {
             text = try String(contentsOfFile: seedfilepath)
         } catch _ {
             print(basePath)
-            let newSeq:[Double] = [500,500,500,2000,500,500,500]
-            seedSeq[rhythmType.tempo.index].append(newSeq)
+            let newSeq:[Int] = [500,500,500,500,500,500,500]
+            seeds.append(newSeq)
             return
         }
         
         //		first split by new line:
-        var lines = text.componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet())
+        let lines = text.componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet())
         
-        var splitlines = lines.map{ $0.componentsSeparatedByString(",") }
+        let splitlines = lines.map{ $0.componentsSeparatedByString(",") }
             .filter{ $0.count > 1 }
-        seedSeq[rhythmType.tempo.index] = splitlines.map{ $0.map { Double($0)! } }
-        
-        seedSeq[rhythmType.tempo.index] = seedSeq[rhythmType.tempo.index].filter{ $0.count>0 }
-        
-        //		load rhythm seed
-        let seedfilepath2 = basePath.stringByAppendingPathComponent("seeds/seeds_meter.csv")
-        
-        do {
-            text = try String(contentsOfFile: seedfilepath2)
-        } catch _ {
-            let newSeq:[Double] = [640,640,320,640,320,320,640,320,320,640,640]
-            seedSeq[rhythmType.meter.index].append(newSeq)
-            seedSeqDownBeats.append([])
-            return
-        }
-        
-        //		first split by new line:
-        lines = text.componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet())
-        
-        splitlines = lines.map{ $0.componentsSeparatedByString(",") }
-            .filter{ $0.count > 0 && Int($0.first!) != nil }
-        
-        seedSeq[rhythmType.meter.index] = []
-        
-        for i in 0..<Int(splitlines.count/2)*2 {
-            if i % 2 == 0 {	// interval
-                seedSeq[rhythmType.meter.index].append(splitlines[i].map{ Double($0)! })
-            } else {
-                seedSeqDownBeats.append(splitlines[i].map{ Int($0)! })
-            }
-        }
-        
-        
-        //		load other files
-        let documentsUrl =  NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0] as NSURL
-        // now lets get the directory contents (including folders)
-        let directoryUrls: [NSURL]
-        do {
-            directoryUrls = try NSFileManager.defaultManager().contentsOfDirectoryAtURL(documentsUrl, includingPropertiesForKeys: nil, options: .SkipsSubdirectoryDescendants)
-        } catch _ { return }
-        
-        let csvFiles = directoryUrls.filter{ $0.pathExtension == "csv" && $0.lastPathComponent!.characters.first != "r" }
-        for csvf in csvFiles {
-            let newRec = expRecord(withFileName: csvf)
-            expRecords[newRec.ID] = newRec
-        }
-        
-        //		maxChainLengths[.audio] = [[Int]]()
-        //		maxChainLengths[.visual] = [[Int]]()
-        
-        //		init chainlength array
-        //		for i in 0...1 {
-        ////			for j in
-        //			maxChainLengths[.audio]!.append([Int](count: seedSeq[i].count, repeatedValue: 0))
-        //			maxChainLengths[.visual]!.append([Int](count: seedSeq[i].count, repeatedValue: 0))
-        //		}
-        
-        //		also init openends too
-        for (k,v) in expRecords {
-            maxID = max(maxID, v.ID)
-            
-            guard v.chainLength < MaxChainLength else {
-                print("ignore full chain length: \(v.chainLength)")
-                continue }
-            openEndIDs.append(k)
-            
-            //			guard v.sourceID < 1000 else { continue }
-            //			let old = maxChainLengths[v.condition]![v.rhythm.index][v.sourceID]
-            //			maxChainLengths[v.condition]![v.rhythm.index][v.sourceID] = max(old, v.chainLength)
-        }
-        
+        seeds = splitlines.map{ $0.map { Int($0)! } }
+        seeds = seeds.filter{ $0.count>0 }
+        print(seeds)
 	}
 	
 	func seqToInterval(seq:[(type: Tap, dur: Double)]) -> [Double] {

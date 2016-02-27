@@ -14,6 +14,7 @@
 		22D0ADE21BE13538007B7C34 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 22D0ADE11BE13538007B7C34 /* Assets.xcassets */; };
 		22D0ADE51BE13538007B7C34 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 22D0ADE31BE13538007B7C34 /* LaunchScreen.storyboard */; };
 		22D0ADED1BE13548007B7C34 /* ExpEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D0ADEC1BE13548007B7C34 /* ExpEngine.swift */; };
+		F527CBD51C82538A00905B1F /* Tone440hz.wav in Resources */ = {isa = PBXBuildFile; fileRef = F527CBD41C82538A00905B1F /* Tone440hz.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		22D0ADE41BE13538007B7C34 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		22D0ADE61BE13538007B7C34 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		22D0ADEC1BE13548007B7C34 /* ExpEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpEngine.swift; sourceTree = "<group>"; };
+		F527CBD41C82538A00905B1F /* Tone440hz.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Tone440hz.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 		22D0ADD91BE13538007B7C34 /* SMTap */ = {
 			isa = PBXGroup;
 			children = (
+				F527CBD41C82538A00905B1F /* Tone440hz.wav */,
 				22D0ADDA1BE13538007B7C34 /* AppDelegate.swift */,
 				22D0ADDC1BE13538007B7C34 /* ViewController.swift */,
 				22924B231BE13D2E00BBE043 /* ExpViewController.swift */,
@@ -130,6 +133,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				22D0ADE51BE13538007B7C34 /* LaunchScreen.storyboard in Resources */,
+				F527CBD51C82538A00905B1F /* Tone440hz.wav in Resources */,
 				22D0ADE21BE13538007B7C34 /* Assets.xcassets in Resources */,
 				22D0ADE01BE13538007B7C34 /* Main.storyboard in Resources */,
 			);

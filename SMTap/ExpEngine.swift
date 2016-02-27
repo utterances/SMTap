@@ -25,10 +25,13 @@ class ExpEngine : NSObject {
 		var type: TaskType
 		var description: String { return "\(type.rawValue): \(repeats)x \(length)" }
 		
-		init(length: Int, repeats: Int, type: TaskType) {
+        var seedID: Int
+        
+        init(length: Int, repeats: Int, type: TaskType, seedID: Int = -1) {
 			self.length = length
 			self.repeats = repeats
 			self.type = type
+            self.seedID = seedID
 		}
 		
 		init(inputString:String) {
@@ -45,6 +48,7 @@ class ExpEngine : NSObject {
 			
 			repeats = Int(fields[1])!
 			length = Int(fields[2])!
+            seedID = -1
 		}
 	}
 	
@@ -78,10 +82,11 @@ class ExpEngine : NSObject {
 		init(ID: String) { self.ID = ID }
 	}
 	
-	enum Tap: String {
+	enum EventType: String {
 		case Up
 		case Down
         case Pos
+        case Audio
 	}
 	
 // storage:
@@ -105,8 +110,8 @@ class ExpEngine : NSObject {
 	
 	var isRecording = false
 	
-	private var curRecording = [(type: Tap, dur: Double)]()
-	private var curRecordingsAll = [[(type: Tap, dur: Double)]]()
+	private var curRecording = [(type: EventType, dur: Double)]()
+	private var curRecordingsAll = [[(type: EventType, dur: Double)]]()
     private var curPos = [CGPoint]()
     private var curPosAll = [[CGPoint]]()
 	private var startTime: NSTimeInterval = 0
@@ -140,9 +145,12 @@ class ExpEngine : NSObject {
         seeds = splitlines.map{ $0.map { Int($0)! } }
         seeds = seeds.filter{ $0.count>0 }
         print(seeds)
+        
+//        init audio URL:
+        audioURL = NSBundle.mainBundle().URLForResource("Tone440hz", withExtension: "wav")!
 	}
 	
-	func seqToInterval(seq:[(type: Tap, dur: Double)]) -> [Double] {
+	func seqToInterval(seq:[(type: EventType, dur: Double)]) -> [Double] {
 //		convert up down data into interval format, use ms and lower precision
 		var result = [Double]()
 		
@@ -161,7 +169,7 @@ class ExpEngine : NSObject {
 		return result
 	}
 
-	func seqToString(seq:[(type: Tap, dur: Double)]) -> [String] {
+	func seqToString(seq:[(type: EventType, dur: Double)]) -> [String] {
 		var result = [String]()
 		
 		for s in seq {
@@ -233,7 +241,7 @@ class ExpEngine : NSObject {
         curPos.append(pos)
     }
     
-	private func saveEvent(type: Tap, time: NSTimeInterval) {
+	private func saveEvent(type: EventType, time: NSTimeInterval) {
 		guard isRecording else {
 			return	// sanity check here, shouldn't really happen
 		}
@@ -254,7 +262,7 @@ class ExpEngine : NSObject {
 		}
 	}
 	
-    private func saveToFile(seqs:[[(type: Tap, dur: Double)]], posSeqs:[[CGPoint]], outlier:Bool) {
+    private func saveToFile(seqs:[[(type: EventType, dur: Double)]], posSeqs:[[CGPoint]], outlier:Bool) {
 //		NSLog("salva me")
 		//		make file name
 		let formatter = NSDateFormatter()
@@ -349,6 +357,106 @@ class ExpEngine : NSObject {
 		
 		sessionHistory.append(Session(tasks: session, date: NSDate()))
 	}
+    
+//    MARK: - playback
+    var playingAudio = true
+    
+    private var audioURL: NSURL!
+    
+    private var tonePlayers = [AVAudioPlayer]()
+    
+    private var playTimers = [NSTimer]()
+    
+    private var curBeat: Int = 0
+    
+    private var curSeed: [Int] { return seeds[curTask.seedID] }
+    
+    //	private var curPlaybackSequence = [Double]()
+    private var donePlaying: (()->())! = nil
+    
+    func play(donePlaying: (() -> ())!) {
+        guard seeds[curTask.seedID].count > 0 else {
+            if donePlaying != nil {
+                donePlaying()
+            }
+            return
+        }
+        
+        playTimers = []
+        
+        self.donePlaying = donePlaying
+        
+        curBeat = 0
+        print(seeds[curTask.seedID])
+        //		print(curSeed.count)
+        //		print(seedSeqDownBeats[currentRecord.seedID])
+//        var curTime: Double = 0.05
+        
+
+        lastTime = tonePlayers.last!.deviceCurrentTime + 0.2
+        playTone(lastTime)
+        
+        let timer = NSTimer(timeInterval: NSTimeInterval(curSeed.first!/2000), target: self, selector: "scheduleTone:", userInfo: nil, repeats: false)
+        NSRunLoop.mainRunLoop().addTimer(timer, forMode: NSRunLoopCommonModes)
+        
+        let totalTime = Double(curSeed.reduce(0){ ($0 + $1) } / 1000 + 1)
+        NSTimer.scheduledTimerWithTimeInterval(totalTime, target: self, selector: "stopPlaying:", userInfo: nil, repeats: false)
+    }
+    
+    private var lastTime: NSTimeInterval = 0
+    private var playerPool: [AVAudioPlayer] = []
+    
+    func scheduleTone(timer: NSTimer) {
+        let interval = Double(curSeed[curBeat-1])
+        lastTime = lastTime + interval/1000
+        
+        if curBeat < curSeed.count {
+            let nextInterval = Double(curSeed[curBeat])
+            let timer = NSTimer(timeInterval: NSTimeInterval((nextInterval+interval)/2000), target: self, selector: "scheduleTone:", userInfo: nil, repeats: false)
+            NSRunLoop.mainRunLoop().addTimer(timer, forMode: NSRunLoopCommonModes)
+        }
+        
+        playTone(lastTime)
+        
+        //		schedule next beat:
+        
+    }
+    
+    private func playTone(time:NSTimeInterval) {
+        
+//        print("play: \(time), \(curBeat), \(beatIndex)")
+        saveEvent(.Audio, time: time)
+        curBeat += 1
+        
+        //			find available player:
+        //		print(playerPool[beatIndex].count)
+        
+        if playerPool.count > 0 {
+            let player = playerPool.removeLast()
+            player.playAtTime(time)
+            print("success")
+            return
+        }
+        
+        //		otherwise just stop a player and use it:
+        tonePlayers.last?.stop()
+        tonePlayers.last?.playAtTime(time)
+    }
+    
+    func stopPlaying(timer: NSTimer) {
+        print("stopping")
+        if donePlaying != nil {
+            donePlaying()
+        }
+    }
+    
+}
+
+extension ExpEngine : AVAudioPlayerDelegate {
+    func audioPlayerDidFinishPlaying(player: AVAudioPlayer, successfully flag: Bool) {
+        playerPool.append(player)
+        player.prepareToPlay()
+    }
 }
 
 extension Int

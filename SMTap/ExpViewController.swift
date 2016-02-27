@@ -31,7 +31,7 @@ class ExpViewController: UIViewController {
 	private let initInstruct = ["In this session you will tap in the center of the button with the index finger of your preferred hand while resting the other fingers on the iPad. \n\nThe screen is very sensitive, so you can tap fairly lightly. While the iPad isn’t fragile, please avoid hard taps and do not press down after making contact with the screen. A brief contact is sufficient, and you only need to tap hard enough to clearly feel the impact of your finger on the screen.",
 	"Please use a consistent tapping style for all of the tapping tasks, regardless of how fast or slow you tap. While tapping, try avoid drifting from the center of the button.\n\nTake this time to practice and move the button to a comfortable position."]
 	//	Please rest your wrist and fingers (other than index finger) on the table while tapping.
-	
+    
 	private let instruct: [ExpEngine.TaskType: [String]] = [
 	ExpEngine.TaskType.Slow : ["In this task you will tap as slow as possible while maintaining a smooth and continuous rhythm. Please tap as evenly as possible. Try practice tapping as slow as possible on the button below. When you are ready to continue, tap Next",
 		"You are ready to begin, start tapping as slow as possible below:"],
@@ -42,8 +42,8 @@ class ExpViewController: UIViewController {
 	ExpEngine.TaskType.Fast : ["In this task you will tap as fast as possible. Try practice tapping as fast as possible on the button below. When you are ready to continue, tap Next",
 		"You are ready to begin, start tapping as fast as you can:"],
         
-    ExpEngine.TaskType.Sync : ["In this task you will tap as fast as possible. Try practice tapping as fast as possible on the button below. When you are ready to continue, tap Next",
-        "You are ready to begin, start tapping as fast as you can:"]
+    ExpEngine.TaskType.Sync : ["In this test you will tap in time with a metronome and then continue to tap at the same pace once the metronome stops. The pace of the metronome vary on each trial, so please do your best to match what you hear as quickly as possible. \n\nWe also ask that you do your best to not count in your head OR tap your feet to what you hear.",
+        "You are ready to begin, start tapping to the beat:"]
 	]
 
 	private let instructCommon = ["Keep tapping...",

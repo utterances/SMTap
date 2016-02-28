@@ -238,11 +238,23 @@ extension ViewController: UITableViewDataSource {
 		switch tableView {
 		case sessionTableview:			return engine.session.count
 		case sessionHistoryTableView:	return engine.sessionHistory.count
-		case taskHistoryTableView:		return engine.taskHistory.count
+		case taskHistoryTableView:
+            switch section {
+            case 0:
+                return engine.taskHistory.count
+            case 1:
+                return engine.seeds.count
+            default: return 0
+            }
 		default: return 0
 	 	}
 	}
 	
+    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        guard tableView == taskHistoryTableView else { return nil }
+        return section == 0 ? "Previous Tasks" : "Seeds"
+    }
+    
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCellWithIdentifier("taskCell", forIndexPath: indexPath)
 		switch tableView {
@@ -252,7 +264,14 @@ extension ViewController: UITableViewDataSource {
 			cell.textLabel?.text = engine.sessionHistory[indexPath.item].description
 			cell.detailTextLabel?.text = engine.sessionHistory[indexPath.item].dateString
 		case taskHistoryTableView:
-			cell.textLabel?.text = engine.taskHistory[indexPath.item].description
+            if indexPath.section == 0 {
+                cell.textLabel?.text = engine.taskHistory[indexPath.item].description
+            } else {
+                let strseed = engine.seeds[indexPath.item].map{"\($0)"}
+                
+                cell.textLabel?.text = strseed.reduce(""){$0! + " "
+                    + $1}
+            }
 		default: break
 		}
 		
@@ -271,4 +290,8 @@ extension ViewController: UITableViewDataSource {
 		engine.session[toIndexPath.item] = f
 		engine.session[fromIndexPath.item] = t
 	}
+    
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return tableView == taskHistoryTableView ? 2 : 1
+    }
 }

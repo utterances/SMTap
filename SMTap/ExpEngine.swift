@@ -23,7 +23,14 @@ class ExpEngine : NSObject {
 		var length: Int
 		var repeats: Int
 		var type: TaskType
-		var description: String { return "\(type.rawValue): \(repeats)x \(length)" }
+		var description: String {
+            switch type {
+            case .Sync:
+                return "\(type.rawValue): \(seedID)"
+            default:
+                return "\(type.rawValue): \(repeats)x \(length)"
+            }
+        }
 		
         var seedID: Int
         
@@ -46,9 +53,17 @@ class ExpEngine : NSObject {
 			default: type = .Normal
 			}
 			
-			repeats = Int(fields[1])!
-			length = Int(fields[2])!
+            repeats = -1
+            length = -1
             seedID = -1
+            
+            switch type {
+            case .Sync:
+                seedID = Int(fields[1])!
+            default:
+                repeats = Int(fields[1])!
+                length = Int(fields[2])!
+            }
 		}
 	}
 	
@@ -333,6 +348,11 @@ class ExpEngine : NSObject {
 		session.append(task)
 		addToHistory(task)
 	}
+    
+    func addSyncTask(seedID: Int) {
+        let task = Task(length: -1, repeats: -1, type: .Sync, seedID: seedID)
+        session.append(task)
+    }
 	
 	func addToHistory(task: Task) {
 		if !(taskHistory.contains{

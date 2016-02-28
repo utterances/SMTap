@@ -249,6 +249,9 @@
                                             <segment title="Fast"/>
                                             <segment title="Sync"/>
                                         </segments>
+                                        <connections>
+                                            <action selector="typeChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="YPG-CL-DBM"/>
+                                        </connections>
                                     </segmentedControl>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S2x-GL-95E">
                                         <rect key="frame" x="145" y="198" width="141" height="22"/>

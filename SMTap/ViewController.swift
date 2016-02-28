@@ -54,10 +54,31 @@ class ViewController: UIViewController {
 		engine.repeats = Int(sender.value)
 	}
 	
+    @IBAction func typeChanged(sender: UISegmentedControl) {
+        lengthField.enabled = sender.selectedSegmentIndex != 3
+        
+        if sender.selectedSegmentIndex == 3 {
+            let selected = taskHistoryTableView.indexPathForSelectedRow
+            if  selected == nil || selected!.section != 1 {                taskHistoryTableView.selectRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 1), animated: true, scrollPosition: .Top)
+            }
+        }
+    }
+    
 	@IBAction func addTask(sender: UIButton) {
 		sessionTableview.beginUpdates()
-		engine.addTask(Int(lengthField.text!)!, repeats: Int(repeatSlider.value), type: ExpEngine.TaskType.allValues[typeSegControl.selectedSegmentIndex])
 		
+        if typeSegControl.selectedSegmentIndex != 3 {
+            engine.addTask(Int(lengthField.text!)!, repeats: Int(repeatSlider.value), type: ExpEngine.TaskType.allValues[typeSegControl.selectedSegmentIndex])
+        } else {
+            let selected = taskHistoryTableView.indexPathForSelectedRow
+            var seedID = 0
+            if let selected = selected {
+                seedID = selected.section == 1 ? selected.row : 0
+            }
+            
+            engine.addSyncTask(seedID, repeats: Int(repeatSlider.value))
+        }
+        
 		sessionTableview.insertRowsAtIndexPaths([NSIndexPath(forRow: engine.session.count-1, inSection: 0)], withRowAnimation: .Automatic)
 		sessionTableview.endUpdates()
 		taskHistoryTableView.reloadData()
@@ -197,6 +218,8 @@ extension ViewController: UITableViewDelegate {
 			saveButton.enabled = true
 			task = engine.session[indexPath.item]
 		case taskHistoryTableView:
+            guard indexPath.section == 0 else { return }
+            
 			if let i = sessionTableview.indexPathForSelectedRow {
 				sessionTableview.deselectRowAtIndexPath(i, animated: true)
 			}
@@ -212,8 +235,13 @@ extension ViewController: UITableViewDelegate {
 		
 		repeatSlider.value = Float(task.repeats)
 		repeatLabel.text = "\(task.repeats)"
-		lengthField.text = "\(task.length)"
-		typeSegControl.selectedSegmentIndex = ExpEngine.TaskType.allValues.indexOf(task.type)!
+        typeSegControl.selectedSegmentIndex = ExpEngine.TaskType.allValues.indexOf(task.type)!
+        
+        if task.type != .Sync {
+            lengthField.text = "\(task.length)"
+        } else {
+            taskHistoryTableView.selectRowAtIndexPath(NSIndexPath(forRow: task.seedID, inSection: 1), animated: true, scrollPosition: .Top)
+        }
 	}
 	
 	func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {

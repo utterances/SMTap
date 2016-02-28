@@ -349,8 +349,8 @@ class ExpEngine : NSObject {
 		addToHistory(task)
 	}
     
-    func addSyncTask(seedID: Int) {
-        let task = Task(length: -1, repeats: -1, type: .Sync, seedID: seedID)
+    func addSyncTask(seedID: Int, repeats: Int) {
+        let task = Task(length: -1, repeats: repeats, type: .Sync, seedID: seedID)
         session.append(task)
     }
 	

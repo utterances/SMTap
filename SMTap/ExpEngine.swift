@@ -343,16 +343,14 @@ class ExpEngine : NSObject {
 	
 //	MARK: - session and tasks
 	
-	func addTask(length: Int, repeats: Int, type: TaskType) {
-		let task = Task(length: length, repeats: repeats, type: type)
+    func addTask(length: Int, repeats: Int, type: TaskType, seedID: Int = -1) {
+		let task = Task(length: length, repeats: repeats, type: type, seedID: seedID)
 		session.append(task)
-		addToHistory(task)
+
+        if type != .Sync {
+            addToHistory(task)
+        }
 	}
-    
-    func addSyncTask(seedID: Int, repeats: Int) {
-        let task = Task(length: -1, repeats: repeats, type: .Sync, seedID: seedID)
-        session.append(task)
-    }
 	
 	func addToHistory(task: Task) {
 		if !(taskHistory.contains{

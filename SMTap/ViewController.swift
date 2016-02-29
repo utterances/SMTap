@@ -55,7 +55,9 @@ class ViewController: UIViewController {
 	}
 	
     @IBAction func typeChanged(sender: UISegmentedControl) {
-        lengthField.enabled = sender.selectedSegmentIndex != 3
+        if sender.selectedSegmentIndex == 3 {
+            lengthField.text = "50"
+        }
         
         if sender.selectedSegmentIndex == 3 {
             let selected = taskHistoryTableView.indexPathForSelectedRow
@@ -76,7 +78,7 @@ class ViewController: UIViewController {
                 seedID = selected.section == 1 ? selected.row : 0
             }
             
-            engine.addSyncTask(seedID, repeats: Int(repeatSlider.value))
+            engine.addTask(Int(lengthField.text!)!, repeats: Int(repeatSlider.value), type: .Sync, seedID: seedID)
         }
         
 		sessionTableview.insertRowsAtIndexPaths([NSIndexPath(forRow: engine.session.count-1, inSection: 0)], withRowAnimation: .Automatic)

@@ -42,7 +42,7 @@ class ExpViewController: UIViewController {
 	ExpEngine.TaskType.Fast : ["In this task you will tap as fast as possible. Try practice tapping as fast as possible on the button below. When you are ready to continue, tap Next",
 		"You are ready to begin, start tapping as fast as you can:"],
         
-    ExpEngine.TaskType.Sync : ["In this test you will tap in time with a metronome and then continue to tap at the same pace once the metronome stops. The pace of the metronome vary on each trial, so please do your best to match what you hear as quickly as possible. \n\nWe also ask that you do your best to not count in your head OR tap your feet to what you hear.",
+    ExpEngine.TaskType.Sync : ["In this test you will tap in time with a metronome and then continue to tap at the same pace once the metronome stops. The pace of the metronome vary on each trial, so please do your best to match what you hear as quickly as possible. \n\nPlease do your best NOT to count in your head OR tap your feet to what you hear.",
         "You are ready to begin, start tapping to the beat:"]
 	]
 
@@ -170,8 +170,10 @@ class ExpViewController: UIViewController {
 		case 3:
 			updateCounterLabel()
 			if repeats == 0 { // starting new task
+                let lastType = curTask.type
 				engine.currentTaskIndex += 1
 				repeats = curTask.repeats
+                
 				step = 0
 			} else {
 				step = 1
@@ -227,6 +229,7 @@ class ExpViewController: UIViewController {
 		engine.tapPos(tapPos)
 	}
 	
+//  make tap button draggable
 	@IBAction func pannedGesture(sender: UIPanGestureRecognizer) {
 		let thisView = sender.view!
 		let superview = thisView.superview!

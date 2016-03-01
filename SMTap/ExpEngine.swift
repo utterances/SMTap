@@ -32,6 +32,15 @@ class ExpEngine : NSObject {
             }
         }
 		
+        var shortChar: String {
+            switch type {
+            case .Sync:
+                return "y"
+            default:
+                return "\(type.rawValue.characters.first!)"
+            }
+        }
+        
         var seedID: Int
         
         init(length: Int, repeats: Int, type: TaskType, seedID: Int = -1) {
@@ -75,7 +84,7 @@ class ExpEngine : NSObject {
 			var result = ""
 			for t in tasks {
 				if result.characters.count > 0 { result += " " }
-				result += "\(t.type.rawValue.characters.first!)\(t.repeats)x\(t.length)"
+				result += "\(t.shortChar)\(t.repeats)x\(t.length)"
 			}
 			return result
 		}
@@ -184,19 +193,19 @@ class ExpEngine : NSObject {
 		return result
 	}
 
-	func seqToString(seq:[(type: EventType, dur: Double)]) -> [String] {
-		var result = [String]()
-		
-		for s in seq {
-			if s.type == .Down {
-				
-				let interval =  round(s.dur*1000*100)/100
-				let name = s.type.rawValue
-				result.append("\(name[name.startIndex]):\(interval)")
-			}
-		}
-		return result
-	}
+//	func seqToString(seq:[(type: EventType, dur: Double)]) -> [String] {
+//		var result = [String]()
+//		
+//		for s in seq {
+//			if s.type == .Down {
+//				
+//				let interval =  round(s.dur*1000*100)/100
+//				let name = s.type.rawValue.characters.first
+//				result.append("\(name):\(interval)")
+//			}
+//		}
+//		return result
+//	}
 	
 	func intervalToString(invSeq: [Double]) -> String {
 		return invSeq.map{"\(Int($0)) "}.reduce(""){$0 + $1}
@@ -283,7 +292,7 @@ class ExpEngine : NSObject {
 		let formatter = NSDateFormatter()
 		formatter.dateFormat = "yy.MM.dd-hh.mm.ss"
 		var filename = currentRecord.fileName + " " + formatter.stringFromDate(NSDate())
-		filename.appendContentsOf(" "+"\(curTask.type.rawValue.characters.first!)\(curTask.repeats)x \(curTask.length)")
+		filename.appendContentsOf(" "+"\(curTask.shortChar)\(curTask.repeats)x \(curTask.length)")
 		
 		let paths:NSArray = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
 		let basePath: AnyObject! = (paths.count > 0) ? paths.objectAtIndex(0) : nil
@@ -391,6 +400,7 @@ class ExpEngine : NSObject {
     
     //	private var curPlaybackSequence = [Double]()
     private var donePlaying: (()->())! = nil
+    private var failCallback: (()->())! = nil
     
     func play(donePlaying: (() -> ())!) {
         guard seeds[curTask.seedID].count > 0 else {
@@ -411,7 +421,7 @@ class ExpEngine : NSObject {
 //        var curTime: Double = 0.05
         
 
-        lastTime = tonePlayers.last!.deviceCurrentTime + 0.2
+        lastTime = tonePlayers.last!.deviceCurrentTime + 0.1
         playTone(lastTime)
         
         let timer = NSTimer(timeInterval: NSTimeInterval(curSeed.first!/2000), target: self, selector: "scheduleTone:", userInfo: nil, repeats: false)

@@ -28,7 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		if let nsSession = defaults.arrayForKey(DefaultsKey.CurrentSession.rawValue) {
 			for r in nsSession {
 				let rs = r as! NSArray
-				let item = ExpEngine.Task(length: rs[0] as! Int, repeats: rs[1] as! Int, type: ExpEngine.TaskType(rawValue: rs[2] as! String)!)
+                let item = ExpEngine.Task(length: rs[0] as! Int, repeats: rs[1] as! Int, type: ExpEngine.TaskType(rawValue: rs[2] as! String)!, seedID: rs[3] as! Int)
 				engine.session.append(item)
 			}
 		}
@@ -36,7 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		if let tasks = defaults.arrayForKey(DefaultsKey.TaskHistory.rawValue) {
 			for r in tasks {
 				let rs = r as! NSArray
-				let item = ExpEngine.Task(length: rs[0] as! Int, repeats: rs[1] as! Int, type: ExpEngine.TaskType(rawValue: rs[2] as! String)!)
+				let item = ExpEngine.Task(length: rs[0] as! Int, repeats: rs[1] as! Int, type: ExpEngine.TaskType(rawValue: rs[2] as! String)!, seedID: rs[3] as! Int)
 				engine.taskHistory.append(item)
 			}
 		}
@@ -47,13 +47,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 				var tasks: [ExpEngine.Task] = []
 				for i in rs[0] as! NSArray {
 					let i = i as! NSArray
-					let item = ExpEngine.Task(length: i[0] as! Int, repeats: i[1] as! Int, type: ExpEngine.TaskType(rawValue: i[2] as! String)!)
+					let item = ExpEngine.Task(length: i[0] as! Int, repeats: i[1] as! Int, type: ExpEngine.TaskType(rawValue: i[2] as! String)!, seedID: i[3] as! Int)
 					tasks.append(item)
 				}
 				engine.sessionHistory.append(ExpEngine.Session(tasks: tasks, date: rs[1] as! NSDate))
 			}
 		}
-
 		
 		return true
 	}
@@ -82,14 +81,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	}
 
 	private func saveStates() {
-		let array = engine.session.map{[$0.length, $0.repeats, $0.type.rawValue]} as NSArray
+		let array = engine.session.map{[$0.length, $0.repeats, $0.type.rawValue, $0.seedID]} as NSArray
 		NSUserDefaults.standardUserDefaults().setObject(array, forKey: DefaultsKey.CurrentSession.rawValue)
 		
-		let array2 = engine.taskHistory.map{[$0.length, $0.repeats, $0.type.rawValue]} as NSArray
+		let array2 = engine.taskHistory.map{[$0.length, $0.repeats, $0.type.rawValue, $0.seedID]} as NSArray
 		NSUserDefaults.standardUserDefaults().setObject(array2, forKey: DefaultsKey.TaskHistory.rawValue)
 
 		let array3 = engine.sessionHistory.map{
-			[$0.tasks.map{[$0.length, $0.repeats, $0.type.rawValue]}, $0.date] } as NSArray
+			[$0.tasks.map{[$0.length, $0.repeats, $0.type.rawValue, $0.seedID]}, $0.date] } as NSArray
 		NSUserDefaults.standardUserDefaults().setObject(array3, forKey: DefaultsKey.SessionHistory.rawValue)
 	}
 }

@@ -56,7 +56,7 @@ class ViewController: UIViewController {
 	
     @IBAction func typeChanged(sender: UISegmentedControl) {
         if sender.selectedSegmentIndex == 3 {
-            lengthField.text = "50"
+            lengthField.text = "40"
         }
         
         if sender.selectedSegmentIndex == 3 {

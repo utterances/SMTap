@@ -26,7 +26,7 @@ class ExpEngine : NSObject {
 		var description: String {
             switch type {
             case .Sync:
-                return "\(type.rawValue): \(seedID)"
+                return "\(type.rawValue): \(repeats)x \(length), Seed \(seedID)"
             default:
                 return "\(type.rawValue): \(repeats)x \(length)"
             }
@@ -142,6 +142,23 @@ class ExpEngine : NSObject {
 	
 	override init() {
 		super.init()
+//        init audio
+        audioURL = NSBundle.mainBundle().URLForResource("Tone440hz", withExtension: "wav")!
+        
+        for _ in 0...1 {
+            let player: AVAudioPlayer
+            do {
+                player = try AVAudioPlayer(contentsOfURL: audioURL)
+            } catch {
+                print("can't load sound")
+                return
+            }
+            player.delegate = self
+            tonePlayers.append(player)
+            playerPool.append(player)
+        }
+        
+        
 //        load seed file:
         
         let paths:NSArray = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
@@ -170,8 +187,7 @@ class ExpEngine : NSObject {
         seeds = seeds.filter{ $0.count>0 }
         print(seeds)
         
-//        init audio URL:
-        audioURL = NSBundle.mainBundle().URLForResource("Tone440hz", withExtension: "wav")!
+
 	}
 	
 	func seqToInterval(seq:[(type: EventType, dur: Double)]) -> [Double] {
@@ -223,6 +239,11 @@ class ExpEngine : NSObject {
 		isRecording = true
 		curRecording.removeAll(keepCapacity: true)
         curPos.removeAll(keepCapacity: true)
+        
+        if curTask.type == .Sync {
+//            start playing the sequence too
+            self.play(nil)
+        }
 	}
 	
 	func stopRecording() {

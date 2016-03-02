@@ -412,6 +412,9 @@ class ExpEngine : NSObject {
     private var audioURL: NSURL!
     
     private var tonePlayers = [AVAudioPlayer]()
+    private var playerPool: [AVAudioPlayer] = []
+    
+    private var lastTime: NSTimeInterval = 0
     
     private var playTimers = [NSTimer]()
     
@@ -430,6 +433,7 @@ class ExpEngine : NSObject {
             }
             return
         }
+        playingAudio = true
         
         playTimers = []
         
@@ -452,8 +456,7 @@ class ExpEngine : NSObject {
         NSTimer.scheduledTimerWithTimeInterval(totalTime, target: self, selector: "stopPlaying:", userInfo: nil, repeats: false)
     }
     
-    private var lastTime: NSTimeInterval = 0
-    private var playerPool: [AVAudioPlayer] = []
+
     
     func scheduleTone(timer: NSTimer) {
         let interval = Double(curSeed[curBeat-1])
@@ -492,10 +495,20 @@ class ExpEngine : NSObject {
         tonePlayers.last?.playAtTime(time)
     }
     
-    func stopPlaying(timer: NSTimer) {
+    func stopPlaying(timer: NSTimer?) {
         print("stopping")
         if donePlaying != nil {
             donePlaying()
+        }
+        playingAudio = false
+    }
+    
+    func stop() {
+        guard playingAudio else { return }
+        playingAudio = false
+        
+        for p in tonePlayers {
+            p.stop()
         }
     }
     

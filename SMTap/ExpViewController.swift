@@ -140,6 +140,7 @@ class ExpViewController: UIViewController {
 	@IBAction func tapClose(sender: UIButton) {
 		let alertVC = UIAlertController(title: "End This Session? ", message: "Are you sure? Any unfinished task will be discarded, previously completed task are saved automatically.", preferredStyle: .Alert)
 		let exitAction = UIAlertAction(title: "Exit", style: .Destructive) { action in
+            self.engine.stop()
 			self.dismissViewControllerAnimated(true, completion: nil)
 		}
 		let cancelAction = UIAlertAction(title: "Cancel", style: .Default, handler: nil)

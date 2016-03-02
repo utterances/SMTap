@@ -89,7 +89,14 @@ class ViewController: UIViewController {
 	@IBAction func saveTask(sender: UIButton) {
 		if let i = sessionTableview.indexPathForSelectedRow {
 			
-			let task = ExpEngine.Task(length: Int(lengthField.text!)!, repeats: Int(repeatSlider.value), type: ExpEngine.TaskType.allValues[typeSegControl.selectedSegmentIndex])
+			var task = ExpEngine.Task(length: Int(lengthField.text!)!, repeats: Int(repeatSlider.value), type: ExpEngine.TaskType.allValues[typeSegControl.selectedSegmentIndex])
+			
+			let indexpath = taskHistoryTableView.indexPathForSelectedRow
+			if let index = indexpath {
+				if index.section == 1{
+					task.seedID = index.item
+				}
+			}
 			
 			engine.session[i.item] = task
 			engine.addToHistory(task)
@@ -237,13 +244,14 @@ extension ViewController: UITableViewDelegate {
 		
 		repeatSlider.value = Float(task.repeats)
 		repeatLabel.text = "\(task.repeats)"
-        typeSegControl.selectedSegmentIndex = ExpEngine.TaskType.allValues.indexOf(task.type)!
-        
-        if task.type != .Sync {
-            lengthField.text = "\(task.length)"
-        } else {
-            taskHistoryTableView.selectRowAtIndexPath(NSIndexPath(forRow: task.seedID, inSection: 1), animated: true, scrollPosition: .Top)
-        }
+		typeSegControl.selectedSegmentIndex = ExpEngine.TaskType.allValues.indexOf(task.type)!
+		
+
+		lengthField.text = "\(task.length)"
+		
+		if task.type == .Sync {
+			taskHistoryTableView.selectRowAtIndexPath(NSIndexPath(forRow: task.seedID, inSection: 1), animated: true, scrollPosition: .Top)
+		}
 	}
 	
 	func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
@@ -282,7 +290,7 @@ extension ViewController: UITableViewDataSource {
 	
     func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         guard tableView == taskHistoryTableView else { return nil }
-        return section == 0 ? "Previous Tasks" : "Seeds"
+        return section == 0 ? "Previous Tasks" : "Seeds (seeds.csv)"
     }
     
 	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {

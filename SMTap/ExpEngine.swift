@@ -114,8 +114,8 @@ class ExpEngine : NSObject {
 	}
 	
 // storage:
-    var seeds: [[Int]] = [[Int]]()
-    
+	var seeds: [[Int]] = [[Int]]()
+	
 	var taskHistory: [Task] = [Task]() {
 		didSet { if taskHistory.count > 10 { taskHistory.removeLast() } }
 	}
@@ -136,8 +136,8 @@ class ExpEngine : NSObject {
 	
 	private var curRecording = [(type: EventType, dur: Double)]()
 	private var curRecordingsAll = [[(type: EventType, dur: Double)]]()
-    private var curPos = [CGPoint]()
-    private var curPosAll = [[CGPoint]]()
+	private var curPos = [CGPoint]()
+	private var curPosAll = [[CGPoint]]()
 	private var startTime: NSTimeInterval = 0
 	
 	override init() {
@@ -196,9 +196,7 @@ class ExpEngine : NSObject {
 		
 		var prevDur = seq[0].dur
 		for i in 1..<seq.count {
-			guard seq[i].type == .Down else {
-				continue
-			}
+			guard seq[i].type == .Down else { continue }
 			
 			var interval = (seq[i].dur - prevDur)*1000
 			interval = round(100 * interval) / 100
@@ -238,12 +236,14 @@ class ExpEngine : NSObject {
 		print("started recording")
 		isRecording = true
 		curRecording.removeAll(keepCapacity: true)
-        curPos.removeAll(keepCapacity: true)
-        
-        if curTask.type == .Sync {
-//            start playing the sequence too
-            self.play(nil)
-        }
+		curPos.removeAll(keepCapacity: true)
+		startTime = tonePlayers.first!.deviceCurrentTime
+		
+		if curTask.type == .Sync {
+		//            start playing the sequence too
+			self.play(nil)
+		}
+		
 	}
 	
 	func stopRecording() {
@@ -259,12 +259,12 @@ class ExpEngine : NSObject {
 		//		save sequence:
 		//		normalize time first
 		
-		let firstTime = curRecording[0].dur
-		for i in 0..<curRecording.count {
-			var e = curRecording[i]
-			e.dur -= firstTime
-			curRecording[i] = e
-		}
+//		let firstTime = curRecording[0].dur
+//		for i in 0..<curRecording.count {
+//			var e = curRecording[i]
+//			e.dur -= firstTime
+//			curRecording[i] = e
+//		}
 		
 //		save to record stash, save to file later
 		curRecordingsAll.append(curRecording)
@@ -274,15 +274,15 @@ class ExpEngine : NSObject {
 	}
 	
 	func tapUp() {
-		saveEvent(.Up, time: NSDate().timeIntervalSince1970)
+		saveEvent(.Up, time: tonePlayers.first!.deviceCurrentTime)
 	}
 	
 	func tapDown() {
-		saveEvent(.Down, time: NSDate().timeIntervalSince1970)
+		saveEvent(.Down, time: tonePlayers.first!.deviceCurrentTime)
 	}
 	
     func tapPos(pos: CGPoint) {
-        saveEvent(.Pos, time: NSDate().timeIntervalSince1970)
+		saveEvent(.Pos, time: tonePlayers.first!.deviceCurrentTime)
         curPos.append(pos)
     }
     
@@ -294,17 +294,17 @@ class ExpEngine : NSObject {
 		let dur = time - startTime
 		curRecording.append((type, dur))
 		
-//		do filtering right now:
+//		do filtering right now: disabled
 		
 //		FIXME!
-		if type == .Up && curRecording.count > 3 {
-			let gap = curRecording[curRecording.count-2].dur - curRecording[curRecording.count-4].dur
-			if gap < 0.05 {
-				print("too fast \(gap)")
-				curRecording.removeLast()
-				curRecording.removeLast()
-			}
-		}
+//		if type == .Up && curRecording.count > 3 {
+//			let gap = curRecording[curRecording.count-2].dur - curRecording[curRecording.count-4].dur
+//			if gap < 0.05 {
+//				print("too fast \(gap)")
+//				curRecording.removeLast()
+//				curRecording.removeLast()
+//			}
+//		}
 	}
 	
     private func saveToFile(seqs:[[(type: EventType, dur: Double)]], posSeqs:[[CGPoint]], outlier:Bool) {
@@ -442,7 +442,7 @@ class ExpEngine : NSObject {
 //        var curTime: Double = 0.05
         
 
-        lastTime = tonePlayers.last!.deviceCurrentTime + 0.1
+        lastTime = tonePlayers.last!.deviceCurrentTime + 0.5
         playTone(lastTime)
         
         let timer = NSTimer(timeInterval: NSTimeInterval(curSeed.first!/2000), target: self, selector: "scheduleTone:", userInfo: nil, repeats: false)

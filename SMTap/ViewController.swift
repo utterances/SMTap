@@ -104,6 +104,7 @@ class ViewController: UIViewController {
 		}
 		
 		sender.enabled = false
+        taskHistoryTableView.reloadData()
 	}
 	
 	@IBAction func endEditLength(sender: UITextField) {

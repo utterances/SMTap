@@ -52,9 +52,9 @@ class ExpEngine : NSObject {
 		
 		init(inputString:String) {
 			//			s-1-12
-			let fields = inputString.componentsSeparatedByString("-")
+			let fields = inputString.components(separatedBy: "-")
 			
-			switch fields[0].lowercaseString {
+			switch fields[0].lowercased() {
 				case "s": type = .Slow
 				case "n": type = .Normal  //FIXME: check initial letter used for saving to match what's loaded
 				case "f": type = .Fast
@@ -78,7 +78,7 @@ class ExpEngine : NSObject {
 	
 	struct Session: CustomStringConvertible {
 		var tasks: [Task]
-		var date: NSDate
+		var date: Date
 		
 		var description: String {
 			var result = ""
@@ -90,10 +90,10 @@ class ExpEngine : NSObject {
 		}
 		
 		var dateString: String {
-			let dateFormat = NSDateFormatter.dateFormatFromTemplate("EEEE, MMM d", options: 0, locale: NSLocale.currentLocale())
-			let dateformatter = NSDateFormatter()
+			let dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEE, MMM d", options: 0, locale: Locale.current)
+			let dateformatter = DateFormatter()
 			dateformatter.dateFormat = dateFormat
-			return dateformatter.stringFromDate(date)
+			return dateformatter.string(from: date)
 		}
 	}
 	
@@ -134,21 +134,21 @@ class ExpEngine : NSObject {
 	
 	var isRecording = false
 	
-	private var curRecording = [(type: EventType, dur: Double)]()
-	private var curRecordingsAll = [[(type: EventType, dur: Double)]]()
-	private var curPos = [CGPoint]()
-	private var curPosAll = [[CGPoint]]()
-	private var startTime: NSTimeInterval = 0
+	fileprivate var curRecording = [(type: EventType, dur: Double)]()
+	fileprivate var curRecordingsAll = [[(type: EventType, dur: Double)]]()
+	fileprivate var curPos = [CGPoint]()
+	fileprivate var curPosAll = [[CGPoint]]()
+	fileprivate var startTime: TimeInterval = 0
 	
 	override init() {
 		super.init()
 //        init audio
-        audioURL = NSBundle.mainBundle().URLForResource("Tone440hz", withExtension: "wav")!
+        audioURL = Bundle.main.url(forResource: "Tone440hz", withExtension: "wav")!
         
         for _ in 0...1 {
             let player: AVAudioPlayer
             do {
-                player = try AVAudioPlayer(contentsOfURL: audioURL)
+                player = try AVAudioPlayer(contentsOf: audioURL)
             } catch {
                 print("can't load sound")
                 return
@@ -161,27 +161,26 @@ class ExpEngine : NSObject {
         
 //        load seed file:
         
-        let paths:NSArray = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
-        let basePath: AnyObject! = (paths.count > 0) ? paths.objectAtIndex(0) : nil
-        
-        let seedfilepath = basePath.stringByAppendingPathComponent("seeds.csv")
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
+
+        let seedfilepath = URL(string: paths[0])?.appendingPathComponent("seeds.csv")
         
 //        print(seedfilepath)
         
         var text: String
         do {
-            text = try String(contentsOfFile: seedfilepath)
+            text = try String(contentsOfFile: (seedfilepath?.absoluteString)!)
         } catch _ {
-            print(basePath)
+            print(paths[0])
             let newSeq:[Int] = [500,500,500,500,500,500,500]
             seeds.append(newSeq)
             return
         }
         
         //		first split by new line:
-        let lines = text.componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet())
+        let lines = text.components(separatedBy: CharacterSet.newlines)
         
-        let splitlines = lines.map{ $0.componentsSeparatedByString(",") }
+        let splitlines = lines.map{ $0.components(separatedBy: ",") }
             .filter{ $0.count > 1 }
         seeds = splitlines.map{ $0.map { Int($0)! } }
         seeds = seeds.filter{ $0.count>0 }
@@ -190,7 +189,7 @@ class ExpEngine : NSObject {
 
 	}
 	
-	func seqToInterval(seq:[(type: EventType, dur: Double)]) -> [Double] {
+	func seqToInterval(_ seq:[(type: EventType, dur: Double)]) -> [Double] {
 //		convert up down data into interval format, use ms and lower precision
 		var result = [Double]()
 		
@@ -221,13 +220,13 @@ class ExpEngine : NSObject {
 //		return result
 //	}
 	
-	func intervalToString(invSeq: [Double]) -> String {
+	func intervalToString(_ invSeq: [Double]) -> String {
 		return invSeq.map{"\(Int($0)) "}.reduce(""){$0 + $1}
 	}
 	
 //	MARK: - recording methods
 	
-	func startNewRecord(id: String) {
+	func startNewRecord(_ id: String) {
 		currentRecord = expRecord(ID: id)
 	}
 	
@@ -235,8 +234,8 @@ class ExpEngine : NSObject {
 		guard !isRecording else { return }
 		print("started recording")
 		isRecording = true
-		curRecording.removeAll(keepCapacity: true)
-		curPos.removeAll(keepCapacity: true)
+		curRecording.removeAll(keepingCapacity: true)
+		curPos.removeAll(keepingCapacity: true)
 		startTime = tonePlayers.first!.deviceCurrentTime
 		
 		if curTask.type == .Sync {
@@ -281,12 +280,12 @@ class ExpEngine : NSObject {
 		saveEvent(.Down, time: tonePlayers.first!.deviceCurrentTime)
 	}
 	
-    func tapPos(pos: CGPoint) {
+    func tapPos(_ pos: CGPoint) {
 		saveEvent(.Pos, time: tonePlayers.first!.deviceCurrentTime)
         curPos.append(pos)
     }
     
-	private func saveEvent(type: EventType, time: NSTimeInterval) {
+	fileprivate func saveEvent(_ type: EventType, time: TimeInterval) {
 		guard isRecording else {
 			return	// sanity check here, shouldn't really happen
 		}
@@ -307,18 +306,18 @@ class ExpEngine : NSObject {
 //		}
 	}
 	
-    private func saveToFile(seqs:[[(type: EventType, dur: Double)]], posSeqs:[[CGPoint]], outlier:Bool) {
+    fileprivate func saveToFile(_ seqs:[[(type: EventType, dur: Double)]], posSeqs:[[CGPoint]], outlier:Bool) {
 //		NSLog("salva me")
 		//		make file name
-		let formatter = NSDateFormatter()
+		let formatter = DateFormatter()
 		formatter.dateFormat = "yy.MM.dd-hh.mm.ss"
-		var filename = currentRecord.fileName + " " + formatter.stringFromDate(NSDate())
-		filename.appendContentsOf(" "+"\(curTask.shortChar)\(curTask.repeats)x \(curTask.length)")
+		var filename = currentRecord.fileName + " " + formatter.string(from: Date())
+		filename.append(" "+"\(curTask.shortChar)\(curTask.repeats)x \(curTask.length)")
 		
-		let paths:NSArray = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
-		let basePath: AnyObject! = (paths.count > 0) ? paths.objectAtIndex(0) : nil
+		let paths = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true)
+		let basePath = paths[0]
 		
-		let baseName = String(basePath) + "/" + filename
+		let baseName = String(describing: basePath) + "/" + filename
 		print("saving to \(baseName)")
 		
 		let fullpath1 = baseName + ".txt"
@@ -339,7 +338,7 @@ class ExpEngine : NSObject {
  		}
 		
 		do {
-			try lines.writeToFile(fullpath1, atomically: false, encoding: NSUTF8StringEncoding)
+			try lines.write(toFile: fullpath1, atomically: false, encoding: String.Encoding.utf8)
 		} catch {
 			NSLog("bad:"+filename)
 		}
@@ -355,25 +354,25 @@ class ExpEngine : NSObject {
 		}
 		
 		do {
-			try lines.writeToFile(fullpath2, atomically: false, encoding: NSUTF8StringEncoding)
+			try lines.write(toFile: fullpath2, atomically: false, encoding: String.Encoding.utf8)
 			NSLog(lines)
 		} catch {
 			NSLog("bad i:"+filename)
 		}
 	}
 	
-	func flushRecordToFile(save save:Bool = true) {
+	func flushRecordToFile(save:Bool = true) {
 //		save current record to disk
 		if save {
             saveToFile(curRecordingsAll, posSeqs: curPosAll, outlier:false)
 		}
-		curRecordingsAll.removeAll(keepCapacity: true)
+		curRecordingsAll.removeAll(keepingCapacity: true)
 	}
 	
 	
 //	MARK: - session and tasks
 	
-    func addTask(length: Int, repeats: Int, type: TaskType, seedID: Int = -1) {
+    func addTask(_ length: Int, repeats: Int, type: TaskType, seedID: Int = -1) {
 		let task = Task(length: length, repeats: repeats, type: type, seedID: seedID)
 		session.append(task)
 
@@ -382,10 +381,10 @@ class ExpEngine : NSObject {
         }
 	}
 	
-	func addToHistory(task: Task) {
+	func addToHistory(_ task: Task) {
 		if !(taskHistory.contains{
 			$0.length == task.length && $0.repeats == task.repeats && $0.type == task.type }) {
-				taskHistory.insert(task, atIndex: 0)
+				taskHistory.insert(task, at: 0)
 		}
 	}
 	
@@ -403,30 +402,30 @@ class ExpEngine : NSObject {
 		
 		guard !saved else { return }
 		
-		sessionHistory.append(Session(tasks: session, date: NSDate()))
+		sessionHistory.append(Session(tasks: session, date: Date()))
 	}
     
 //    MARK: - playback
     var playingAudio = true
     
-    private var audioURL: NSURL!
+    fileprivate var audioURL: URL!
     
-    private var tonePlayers = [AVAudioPlayer]()
-    private var playerPool: [AVAudioPlayer] = []
+    fileprivate var tonePlayers = [AVAudioPlayer]()
+    fileprivate var playerPool: [AVAudioPlayer] = []
     
-    private var lastTime: NSTimeInterval = 0
+    fileprivate var lastTime: TimeInterval = 0
     
-    private var playTimers = [NSTimer]()
+    fileprivate var playTimers = [Timer]()
     
-    private var curBeat: Int = 0
+    fileprivate var curBeat: Int = 0
     
-    private var curSeed: [Int] { return seeds[curTask.seedID] }
+    fileprivate var curSeed: [Int] { return seeds[curTask.seedID] }
     
     //	private var curPlaybackSequence = [Double]()
-    private var donePlaying: (()->())! = nil
-    private var failCallback: (()->())! = nil
+    fileprivate var donePlaying: (()->())! = nil
+    fileprivate var failCallback: (()->())! = nil
     
-    func play(donePlaying: (() -> ())!) {
+    func play(_ donePlaying: (() -> ())!) {
         guard seeds[curTask.seedID].count > 0 else {
             if donePlaying != nil {
                 donePlaying()
@@ -449,23 +448,23 @@ class ExpEngine : NSObject {
         lastTime = tonePlayers.last!.deviceCurrentTime + 0.5
         playTone(lastTime)
         
-        let timer = NSTimer(timeInterval: NSTimeInterval(curSeed.first!/2000), target: self, selector: "scheduleTone:", userInfo: nil, repeats: false)
-        NSRunLoop.mainRunLoop().addTimer(timer, forMode: NSRunLoopCommonModes)
+        let timer = Timer(timeInterval: TimeInterval(curSeed.first!/2000), target: self, selector: #selector(ExpEngine.scheduleTone(_:)), userInfo: nil, repeats: false)
+        RunLoop.main.add(timer, forMode: RunLoopMode.commonModes)
         
         let totalTime = Double(curSeed.reduce(0){ ($0 + $1) } / 1000 + 1)
-        NSTimer.scheduledTimerWithTimeInterval(totalTime, target: self, selector: "stopPlaying:", userInfo: nil, repeats: false)
+        Timer.scheduledTimer(timeInterval: totalTime, target: self, selector: #selector(ExpEngine.stopPlaying(_:)), userInfo: nil, repeats: false)
     }
     
 
     
-    func scheduleTone(timer: NSTimer) {
+    func scheduleTone(_ timer: Timer) {
         let interval = Double(curSeed[curBeat-1])
         lastTime = lastTime + interval/1000
         
         if curBeat < curSeed.count {
             let nextInterval = Double(curSeed[curBeat])
-            let timer = NSTimer(timeInterval: NSTimeInterval((nextInterval+interval)/2000), target: self, selector: "scheduleTone:", userInfo: nil, repeats: false)
-            NSRunLoop.mainRunLoop().addTimer(timer, forMode: NSRunLoopCommonModes)
+            let timer = Timer(timeInterval: TimeInterval((nextInterval+interval)/2000), target: self, selector: #selector(ExpEngine.scheduleTone(_:)), userInfo: nil, repeats: false)
+            RunLoop.main.add(timer, forMode: RunLoopMode.commonModes)
         }
         
         playTone(lastTime)
@@ -474,7 +473,7 @@ class ExpEngine : NSObject {
         
     }
     
-    private func playTone(time:NSTimeInterval) {
+    fileprivate func playTone(_ time:TimeInterval) {
         
 //        print("play: \(time), \(curBeat), \(beatIndex)")
         saveEvent(.Audio, time: time)
@@ -485,17 +484,17 @@ class ExpEngine : NSObject {
         
         if playerPool.count > 0 {
             let player = playerPool.removeLast()
-            player.playAtTime(time)
+            player.play(atTime: time)
             print("success")
             return
         }
         
         //		otherwise just stop a player and use it:
         tonePlayers.last?.stop()
-        tonePlayers.last?.playAtTime(time)
+        tonePlayers.last?.play(atTime: time)
     }
     
-    func stopPlaying(timer: NSTimer?) {
+    func stopPlaying(_ timer: Timer?) {
         print("stopping")
         if donePlaying != nil {
             donePlaying()
@@ -515,7 +514,7 @@ class ExpEngine : NSObject {
 }
 
 extension ExpEngine : AVAudioPlayerDelegate {
-    func audioPlayerDidFinishPlaying(player: AVAudioPlayer, successfully flag: Bool) {
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         playerPool.append(player)
         player.prepareToPlay()
     }
@@ -523,17 +522,17 @@ extension ExpEngine : AVAudioPlayerDelegate {
 
 extension Int
 {
-	static func random(range: Range<Int> ) -> Int
+	static func random(_ range: Range<Int> ) -> Int
 	{
 		var offset = 0
 		
-		if range.startIndex < 0   // allow negative ranges
+		if range.lowerBound < 0   // allow negative ranges
 		{
-			offset = abs(range.startIndex)
+			offset = abs(range.lowerBound)
 		}
 		
-		let mini = UInt32(range.startIndex + offset)
-		let maxi = UInt32(range.endIndex   + offset)
+		let mini = UInt32(range.lowerBound + offset)
+		let maxi = UInt32(range.upperBound   + offset)
 		
 		return Int(mini + arc4random_uniform(maxi - mini)) - offset
 	}

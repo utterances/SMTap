@@ -23,16 +23,16 @@ class ExpViewController: UIViewController {
 	@IBOutlet weak var practiceLabel: UILabel!
 	@IBOutlet weak var instructImg: UIImageView!
 	
-	private var remainTaps: Int = 0
-	private var repeats: Int = 0
+	fileprivate var remainTaps: Int = 0
+	fileprivate var repeats: Int = 0
 	
-	private var showIntroSteps: Int = 0
+	fileprivate var showIntroSteps: Int = 0
 	
-	private let initInstruct = ["In this session you will tap in the center of the button with the index finger of your preferred hand while resting the other fingers on the iPad. \n\nThe screen is very sensitive, so you can tap fairly lightly. While the iPad isn’t fragile, please avoid hard taps and do not press down after making contact with the screen. A brief contact is sufficient, and you only need to tap hard enough to clearly feel the impact of your finger on the screen.",
+	fileprivate let initInstruct = ["In this session you will tap in the center of the button with the index finger of your preferred hand while resting the other fingers on the iPad. \n\nThe screen is very sensitive, so you can tap fairly lightly. While the iPad isn’t fragile, please avoid hard taps and do not press down after making contact with the screen. A brief contact is sufficient, and you only need to tap hard enough to clearly feel the impact of your finger on the screen.",
 	"Please use a consistent tapping style for all of the tapping tasks, regardless of how fast or slow you tap. While tapping, try avoid drifting from the center of the button.\n\nTake this time to practice and move the button to a comfortable position."]
 	//	Please rest your wrist and fingers (other than index finger) on the table while tapping.
     
-	private let instruct: [ExpEngine.TaskType: [String]] = [
+	fileprivate let instruct: [ExpEngine.TaskType: [String]] = [
 	ExpEngine.TaskType.Slow : ["In this task you will tap as slow as possible while maintaining a smooth and continuous rhythm. Please tap as evenly as possible. Try practice tapping as slow as possible on the button below. When you are ready to continue, tap Next",
 		"You are ready to begin, start tapping as slow as possible below:"],
 		
@@ -46,44 +46,44 @@ class ExpViewController: UIViewController {
         "You are ready to begin, start tapping to the beat:"]
 	]
 
-	private let instructCommon = ["Keep tapping...",
+	fileprivate let instructCommon = ["Keep tapping...",
 		"You are done! Press Next to repeat",
 		"You are done! Press Next to continue"]
 	
-	private var curTask: ExpEngine.Task { return engine.curTask }
+	fileprivate var curTask: ExpEngine.Task { return engine.curTask }
 	
-	private var step: Int = 0 {
+	fileprivate var step: Int = 0 {
 		didSet{
 			switch step {
 			case 0:	//begin instruct
-				instructBigLabel.hidden = false
+				instructBigLabel.isHidden = false
 				instructBigLabel.text = instruct[curTask.type]![0]
-				instructLabel.hidden = true
-				tapButton.enabled = true
-				nextButton.enabled = true
-				practiceLabel.hidden = false
-				progressView.hidden = false
+				instructLabel.isHidden = true
+				tapButton.isEnabled = true
+				nextButton.isEnabled = true
+				practiceLabel.isHidden = false
+				progressView.isHidden = false
 				remainTaps = 5
 				progressView.setProgress(0, animated: true)
-				instructImg.hidden = true
+				instructImg.isHidden = true
 			case 1:	//begin task
-				instructBigLabel.hidden = true
-				instructLabel.hidden = false
+				instructBigLabel.isHidden = true
+				instructLabel.isHidden = false
 				instructLabel.text = instruct[curTask.type]![1]
 				engine.startRecording()
-				tapButton.enabled = true
-				nextButton.enabled = false
-				practiceLabel.hidden = true
+				tapButton.isEnabled = true
+				nextButton.isEnabled = false
+				practiceLabel.isHidden = true
 				remainTaps = curTask.length
 				progressView.setProgress(0, animated: true)
-				instructImg.hidden = false
+				instructImg.isHidden = false
 				instructImg.image = UIImage(named: "go")
 			case 2:	// continue tapping
 				instructLabel.text = instructCommon[0]
 			case 3:	// finish tapping
 				engine.stopRecording()
-				tapButton.enabled = false
-				nextButton.enabled = true
+				tapButton.isEnabled = false
+				nextButton.isEnabled = true
 				
 				instructImg.image = UIImage(named: "done")
 				
@@ -95,15 +95,15 @@ class ExpViewController: UIViewController {
 					
 //					check if we are finished:
 					if engine.currentTaskIndex == engine.session.count-1 {
-						let alertVC = UIAlertController(title: "Session Complete (\(engine.currentRecord.ID))", message: "Please find the experimenter. Saved \(engine.session.count) tasks", preferredStyle: .Alert)
+						let alertVC = UIAlertController(title: "Session Complete (\(engine.currentRecord.ID))", message: "Please find the experimenter. Saved \(engine.session.count) tasks", preferredStyle: .alert)
 						let ExVC = self
-						let closeAction = UIAlertAction(title: "OK", style: .Default)
+						let closeAction = UIAlertAction(title: "OK", style: .default)
 							{ finished in
-								ExVC.dismissViewControllerAnimated(true, completion: nil)
+								ExVC.dismiss(animated: true, completion: nil)
 						}
 						alertVC.addAction(closeAction)
 						
-						presentViewController(alertVC, animated: true, completion: nil)
+						present(alertVC, animated: true, completion: nil)
 					}
 					
 				} else {
@@ -118,49 +118,49 @@ class ExpViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		let movBack = UIImage(named: "tapButton-mov")
-		tapButton.setBackgroundImage(movBack, forState: .Normal)
-		tapButton.setBackgroundImage(movBack, forState: .Highlighted)
+		tapButton.setBackgroundImage(movBack, for: UIControlState())
+		tapButton.setBackgroundImage(movBack, for: .highlighted)
 	}
 	
-	override func viewWillAppear(animated: Bool) {
+	override func viewWillAppear(_ animated: Bool) {
 		engine.currentTaskIndex = 0
 		repeats = curTask.repeats
 		counterLabel.text = ""
 		instructBigLabel.text = initInstruct[0]
-		instructLabel.hidden = true
-		instructBigLabel.hidden = false
-		instructImg.hidden = true
+		instructLabel.isHidden = true
+		instructBigLabel.isHidden = false
+		instructImg.isHidden = true
 		if engine.showFeedback {
-			tapButton.setTitleColor(UIColor.whiteColor(), forState: .Highlighted)
+			tapButton.setTitleColor(UIColor.white, for: .highlighted)
 		} else {
-			tapButton.setTitleColor(UIColor.darkGrayColor(), forState: .Highlighted)
+			tapButton.setTitleColor(UIColor.darkGray, for: .highlighted)
 		}
 	}
 	
-	@IBAction func tapClose(sender: UIButton) {
-		let alertVC = UIAlertController(title: "End This Session? ", message: "Are you sure? Any unfinished task will be discarded, previously completed task are saved automatically.", preferredStyle: .Alert)
-		let exitAction = UIAlertAction(title: "Exit", style: .Destructive) { action in
+	@IBAction func tapClose(_ sender: UIButton) {
+		let alertVC = UIAlertController(title: "End This Session? ", message: "Are you sure? Any unfinished task will be discarded, previously completed task are saved automatically.", preferredStyle: .alert)
+		let exitAction = UIAlertAction(title: "Exit", style: .destructive) { action in
             self.engine.stop()
-			self.dismissViewControllerAnimated(true, completion: nil)
+			self.dismiss(animated: true, completion: nil)
 		}
-		let cancelAction = UIAlertAction(title: "Cancel", style: .Default, handler: nil)
+		let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
 		
 		alertVC.addAction(exitAction)
 		alertVC.addAction(cancelAction)
-		presentViewController(alertVC, animated: true, completion: nil)
+		present(alertVC, animated: true, completion: nil)
 	}
 	
-	@IBAction func tapNext(sender: UIButton) {
+	@IBAction func tapNext(_ sender: UIButton) {
 		guard showIntroSteps > 1 else {
 			showIntroSteps += 1
 			
 			if showIntroSteps > 1 {
 				updateCounterLabel()
 				step = 0
-				panButtonGestureRecognizer.enabled = false
+				panButtonGestureRecognizer.isEnabled = false
 				let movBack = UIImage(named: "tapButton")
-				tapButton.setBackgroundImage(movBack, forState: .Normal)
-				tapButton.setBackgroundImage(movBack, forState: .Highlighted)
+				tapButton.setBackgroundImage(movBack, for: UIControlState())
+				tapButton.setBackgroundImage(movBack, for: .highlighted)
 			} else {
 				instructBigLabel.text = initInstruct[showIntroSteps]
 			}
@@ -171,7 +171,7 @@ class ExpViewController: UIViewController {
 		case 3:
 			updateCounterLabel()
 			if repeats == 0 { // starting new task
-                let lastType = curTask.type
+//                let lastType = curTask.type
 				engine.currentTaskIndex += 1
 				repeats = curTask.repeats
                 
@@ -184,13 +184,13 @@ class ExpViewController: UIViewController {
 		}
 	}
 	
-	@IBAction func tapDown(sender: UIButton) {
+	@IBAction func tapDown(_ sender: UIButton) {
 		guard step != 0 else { return }
 		engine.tapDown()
 		
 	}
 	
-	@IBAction func tapUp(sender: UIButton) {
+	@IBAction func tapUp(_ sender: UIButton) {
 		remainTaps -= 1
 		
 		guard step != 0 else {
@@ -222,21 +222,21 @@ class ExpViewController: UIViewController {
 		}
 	}
 	
-	@IBAction func tappedGesture(sender: UITapGestureRecognizer) {
+	@IBAction func tappedGesture(_ sender: UITapGestureRecognizer) {
 		guard step == 1 || step == 2 else { return }
-		var tapPos = sender.locationInView(tapButton)
+		var tapPos = sender.location(in: tapButton)
 		tapPos.x = tapPos.x - tapButton.bounds.width/2
 		tapPos.y = tapPos.y - tapButton.bounds.height/2
 		engine.tapPos(tapPos)
 	}
 	
 //  make tap button draggable
-	@IBAction func pannedGesture(sender: UIPanGestureRecognizer) {
+	@IBAction func pannedGesture(_ sender: UIPanGestureRecognizer) {
 		let thisView = sender.view!
 		let superview = thisView.superview!
 		let superviewH = superview.bounds.size.height
 		let myHalfHeight = thisView.bounds.size.height/2
-		let translation = sender.translationInView(superview)
+		let translation = sender.translation(in: superview)
 		
 		var center = CGPoint(x:thisView.center.x + translation.x,
 			y:thisView.center.y + translation.y);
@@ -255,10 +255,10 @@ class ExpViewController: UIViewController {
 		}
 		
 		sender.view!.center = center
-		sender.setTranslation(CGPoint(x: 0, y: 0), inView: superview)
+		sender.setTranslation(CGPoint(x: 0, y: 0), in: superview)
 	}
 	
-	private func updateCounterLabel() {
+	fileprivate func updateCounterLabel() {
 		counterLabel.text = "Task \(engine.currentTaskIndex+1) of \(engine.session.count), Trial \(curTask.repeats - repeats + 1)"
 	}
 }

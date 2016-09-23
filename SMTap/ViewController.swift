@@ -34,7 +34,7 @@ class ViewController: UIViewController {
 		// Do any additional setup after loading the view, typically from a nib.
 	}
 
-	override func viewWillAppear(animated: Bool) {
+	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		sessionTableview.setEditing(true, animated: false)
 		sessionHistoryTableView.reloadData()
@@ -47,26 +47,26 @@ class ViewController: UIViewController {
 
 //	MARK: - UI events
 
-	@IBAction func sliderChanged(sender: UISlider) {
+	@IBAction func sliderChanged(_ sender: UISlider) {
 		let index = round(sender.value)
 		sender.setValue(index, animated: true)
 		repeatLabel.text = "\(Int(sender.value))"
 		engine.repeats = Int(sender.value)
 	}
 	
-    @IBAction func typeChanged(sender: UISegmentedControl) {
+    @IBAction func typeChanged(_ sender: UISegmentedControl) {
         if sender.selectedSegmentIndex == 3 {
             lengthField.text = "40"
         }
         
         if sender.selectedSegmentIndex == 3 {
             let selected = taskHistoryTableView.indexPathForSelectedRow
-            if  selected == nil || selected!.section != 1 {                taskHistoryTableView.selectRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 1), animated: true, scrollPosition: .Top)
+            if  selected == nil || (selected! as NSIndexPath).section != 1 {                taskHistoryTableView.selectRow(at: IndexPath(row: 0, section: 1), animated: true, scrollPosition: .top)
             }
         }
     }
     
-	@IBAction func addTask(sender: UIButton) {
+	@IBAction func addTask(_ sender: UIButton) {
 		sessionTableview.beginUpdates()
 		
         if typeSegControl.selectedSegmentIndex != 3 {
@@ -75,39 +75,39 @@ class ViewController: UIViewController {
             let selected = taskHistoryTableView.indexPathForSelectedRow
             var seedID = 0
             if let selected = selected {
-                seedID = selected.section == 1 ? selected.row : 0
+                seedID = (selected as NSIndexPath).section == 1 ? (selected as NSIndexPath).row : 0
             }
             
             engine.addTask(Int(lengthField.text!)!, repeats: Int(repeatSlider.value), type: .Sync, seedID: seedID)
         }
         
-		sessionTableview.insertRowsAtIndexPaths([NSIndexPath(forRow: engine.session.count-1, inSection: 0)], withRowAnimation: .Automatic)
+		sessionTableview.insertRows(at: [IndexPath(row: engine.session.count-1, section: 0)], with: .automatic)
 		sessionTableview.endUpdates()
 		taskHistoryTableView.reloadData()
 	}
 	
-	@IBAction func saveTask(sender: UIButton) {
+	@IBAction func saveTask(_ sender: UIButton) {
 		if let i = sessionTableview.indexPathForSelectedRow {
 			
 			var task = ExpEngine.Task(length: Int(lengthField.text!)!, repeats: Int(repeatSlider.value), type: ExpEngine.TaskType.allValues[typeSegControl.selectedSegmentIndex])
 			
 			let indexpath = taskHistoryTableView.indexPathForSelectedRow
 			if let index = indexpath {
-				if index.section == 1{
-					task.seedID = index.item
+				if (index as NSIndexPath).section == 1{
+					task.seedID = (index as NSIndexPath).item
 				}
 			}
 			
-			engine.session[i.item] = task
+			engine.session[(i as NSIndexPath).item] = task
 			engine.addToHistory(task)
-			sessionTableview.reloadRowsAtIndexPaths([i], withRowAnimation: .Right)
+			sessionTableview.reloadRows(at: [i], with: .right)
 		}
 		
-		sender.enabled = false
+		sender.isEnabled = false
         taskHistoryTableView.reloadData()
 	}
 	
-	@IBAction func endEditLength(sender: UITextField) {
+	@IBAction func endEditLength(_ sender: UITextField) {
 		if let i = Int(sender.text!) {
 			sender.text = "\(i)"
 		} else {
@@ -115,93 +115,95 @@ class ViewController: UIViewController {
 		}
 	}
 	
-	@IBAction func startSession(sender: UIButton) {
+	@IBAction func startSession(_ sender: UIButton) {
 		guard engine.session.count > 0 else {
-			let alertVC = UIAlertController(title: "Session is Empty", message: "Can't start an empty sesison, add some tasks or load from history.", preferredStyle: .Alert)
-			let okAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
+			let alertVC = UIAlertController(title: "Session is Empty", message: "Can't start an empty sesison, add some tasks or load from history.", preferredStyle: .alert)
+			let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
 			alertVC.addAction(okAction)
-			presentViewController(alertVC, animated: true, completion: nil)
+			present(alertVC, animated: true, completion: nil)
 			return
 		}
 		
 		guard !(idField.text!.isEmpty) else {
-			let alertVC = UIAlertController(title: "No User ID", message: "Please enter a user ID to start a session", preferredStyle: .Alert)
-			let okAction = UIAlertAction(title: "OK", style: .Default) { _ in
+			let alertVC = UIAlertController(title: "No User ID", message: "Please enter a user ID to start a session", preferredStyle: .alert)
+			let okAction = UIAlertAction(title: "OK", style: .default) { _ in
 				self.idField.becomeFirstResponder()
 			}
 			alertVC.addAction(okAction)
-			presentViewController(alertVC, animated: true, completion: nil)
+			present(alertVC, animated: true, completion: nil)
 			return
 		}
 		
 		engine.saveSession()
-		engine.showFeedback = feedbackSwitch.on
-		performSegueWithIdentifier("showExpView", sender: self)
+		engine.showFeedback = feedbackSwitch.isOn
+		performSegue(withIdentifier: "showExpView", sender: self)
 	}
 	
-	@IBAction func saveSession(sender: UIButton) {
+	@IBAction func saveSession(_ sender: UIButton) {
 		engine.saveSession()
 		sessionHistoryTableView.reloadData()
 	}
 	
-	@IBAction func clearTasks(sender: UIButton) {
+	@IBAction func clearTasks(_ sender: UIButton) {
 		guard !engine.taskHistory.isEmpty else { return }
 		clearTable(taskHistoryTableView, sender: sender)
 			{ self.engine.taskHistory.removeAll() }
 	}
 	
-	@IBAction func clearSession(sender: UIButton) {
+	@IBAction func clearSession(_ sender: UIButton) {
 		guard !engine.session.isEmpty else { return }
 		clearTable(sessionTableview, sender: sender)
 			{ self.engine.session.removeAll() }
 	}
 
-	@IBAction func clearSessionHistory(sender: UIButton) {
+	@IBAction func clearSessionHistory(_ sender: UIButton) {
 		guard !engine.sessionHistory.isEmpty else { return }
 		clearTable(sessionHistoryTableView, sender: sender)
 			{ self.engine.sessionHistory.removeAll() }
 	}
 	
-	private func clearTable(tableView: UITableView, sender: UIView, clearBlock: ()->Void ) {
-		let confirmVC = UIAlertController(title: "", message: "Clear all?", preferredStyle: .ActionSheet)
-		let clearAction = UIAlertAction(title: "Clear", style: .Destructive) { _ in
+	fileprivate func clearTable(_ tableView: UITableView, sender: UIView, clearBlock: @escaping ()->Void ) {
+		let confirmVC = UIAlertController(title: "", message: "Clear all?", preferredStyle: .actionSheet)
+		let clearAction = UIAlertAction(title: "Clear", style: .destructive) { _ in
 			clearBlock()
-			tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: .Automatic)
+			tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
 		}
 		
-		let cancelAction = UIAlertAction(title:"Cancel", style: .Cancel){_ in }
+		let cancelAction = UIAlertAction(title:"Cancel", style: .cancel){_ in }
 		
 		confirmVC.addAction(clearAction)
 		confirmVC.addAction(cancelAction)
 		confirmVC.popoverPresentationController?.sourceView = sender
-		confirmVC.popoverPresentationController?.sourceRect = CGRect(origin:CGPoint(x: sender.frame.width/2, y: sender.frame.height), size: CGSizeZero)
-		confirmVC.popoverPresentationController?.permittedArrowDirections = .Up
-		presentViewController(confirmVC, animated: true, completion: nil)
+		confirmVC.popoverPresentationController?.sourceRect = CGRect(origin:CGPoint(x: sender.frame.width/2, y: sender.frame.height), size: CGSize.zero)
+		confirmVC.popoverPresentationController?.permittedArrowDirections = .up
+		present(confirmVC, animated: true, completion: nil)
 	}
 	
+    @IBAction func loadSession(_ sender: UIButton) {
+        if let i = sessionHistoryTableView.indexPathForSelectedRow {
+            engine.session = engine.sessionHistory[(i as NSIndexPath).item].tasks
+            sessionTableview.reloadSections(IndexSet(integer: 0), with: .left)
+        }
+    }
+    
 //	MARK: nav
-	override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+	override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 		// Get the new view controller using segue.destinationViewController.
 		// Pass the selected object to the new view controller.
-		if segue.destinationViewController is ExpViewController {
+		if segue.destination is ExpViewController {
 			engine.length = Int(lengthField.text!)!
 			engine.startNewRecord(idField.text!)
 			
-			(segue.destinationViewController as! ExpViewController).engine = engine
+			(segue.destination as! ExpViewController).engine = engine
 		}
 	}
 	
-	@IBAction func loadSession(sender: UIButton) {
-		if let i = sessionHistoryTableView.indexPathForSelectedRow {
-			engine.session = engine.sessionHistory[i.item].tasks
-			sessionTableview.reloadSections(NSIndexSet(index: 0), withRowAnimation: .Left)
-		}
-	}
+
 	
 }
 
 extension ViewController: UITextFieldDelegate {
-	func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+	func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
 		guard textField == lengthField else { return true }
 		let numbers = "0123456789"
 		for c in string.characters {
@@ -210,7 +212,7 @@ extension ViewController: UITextFieldDelegate {
 		return true
 	}
 	
-	func textFieldShouldReturn(textField: UITextField) -> Bool {
+	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		textField.resignFirstResponder()
 		return false
 	}
@@ -218,25 +220,25 @@ extension ViewController: UITextFieldDelegate {
 }
 
 extension ViewController: UITableViewDelegate {
-	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		let task: ExpEngine.Task
 		switch tableView {
 		case sessionTableview:
 			if let i = taskHistoryTableView.indexPathForSelectedRow {
-				taskHistoryTableView.deselectRowAtIndexPath(i, animated: true)
+				taskHistoryTableView.deselectRow(at: i, animated: true)
 			}
-			saveButton.enabled = true
-			task = engine.session[indexPath.item]
+			saveButton.isEnabled = true
+			task = engine.session[(indexPath as NSIndexPath).item]
 		case taskHistoryTableView:
-            guard indexPath.section == 0 else { return }
+            guard (indexPath as NSIndexPath).section == 0 else { return }
             
 			if let i = sessionTableview.indexPathForSelectedRow {
-				sessionTableview.deselectRowAtIndexPath(i, animated: true)
+				sessionTableview.deselectRow(at: i, animated: true)
 			}
-			saveButton.enabled = false
-			task = engine.taskHistory[indexPath.item]
+			saveButton.isEnabled = false
+			task = engine.taskHistory[(indexPath as NSIndexPath).item]
 		case sessionHistoryTableView:
-			loadSessionButton.enabled = true
+			loadSessionButton.isEnabled = true
 			return
 		default: return
 		}
@@ -245,35 +247,35 @@ extension ViewController: UITableViewDelegate {
 		
 		repeatSlider.value = Float(task.repeats)
 		repeatLabel.text = "\(task.repeats)"
-		typeSegControl.selectedSegmentIndex = ExpEngine.TaskType.allValues.indexOf(task.type)!
+		typeSegControl.selectedSegmentIndex = ExpEngine.TaskType.allValues.index(of: task.type)!
 		
 
 		lengthField.text = "\(task.length)"
 		
 		if task.type == .Sync {
-			taskHistoryTableView.selectRowAtIndexPath(NSIndexPath(forRow: task.seedID, inSection: 1), animated: true, scrollPosition: .Top)
+			taskHistoryTableView.selectRow(at: IndexPath(row: task.seedID, section: 1), animated: true, scrollPosition: .top)
 		}
 	}
-	
-	func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-		if editingStyle == .Delete {
+    
+	@objc(tableView:commitEditingStyle:forRowAtIndexPath:) func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+		if editingStyle == .delete {
 			// Delete the row from the data source
 			switch tableView {
 			case sessionTableview:
-				engine.session.removeAtIndex(indexPath.item)
+				engine.session.remove(at: (indexPath as NSIndexPath).item)
 			case taskHistoryTableView:
-				engine.taskHistory.removeAtIndex(indexPath.item)
+				engine.taskHistory.remove(at: (indexPath as NSIndexPath).item)
 			case sessionHistoryTableView:
-				engine.sessionHistory.removeAtIndex(indexPath.item)
+				engine.sessionHistory.remove(at: (indexPath as NSIndexPath).item)
 			default: return
 			}
-			tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Left)
+			tableView.deleteRows(at: [indexPath], with: .left)
 		}
 	}
 }
 
 extension ViewController: UITableViewDataSource {
-	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		switch tableView {
 		case sessionTableview:			return engine.session.count
 		case sessionHistoryTableView:	return engine.sessionHistory.count
@@ -289,24 +291,24 @@ extension ViewController: UITableViewDataSource {
 	 	}
 	}
 	
-    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         guard tableView == taskHistoryTableView else { return nil }
         return section == 0 ? "Previous Tasks" : "Seeds (seeds.csv)"
     }
     
-	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCellWithIdentifier("taskCell", forIndexPath: indexPath)
+	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath)
 		switch tableView {
 		case sessionTableview:
-			cell.textLabel?.text = engine.session[indexPath.item].description
+			cell.textLabel?.text = engine.session[(indexPath as NSIndexPath).item].description
 		case sessionHistoryTableView:
-			cell.textLabel?.text = engine.sessionHistory[indexPath.item].description
-			cell.detailTextLabel?.text = engine.sessionHistory[indexPath.item].dateString
+			cell.textLabel?.text = engine.sessionHistory[(indexPath as NSIndexPath).item].description
+			cell.detailTextLabel?.text = engine.sessionHistory[(indexPath as NSIndexPath).item].dateString
 		case taskHistoryTableView:
-            if indexPath.section == 0 {
-                cell.textLabel?.text = engine.taskHistory[indexPath.item].description
+            if (indexPath as NSIndexPath).section == 0 {
+                cell.textLabel?.text = engine.taskHistory[(indexPath as NSIndexPath).item].description
             } else {
-                let strseed = engine.seeds[indexPath.item].map{"\($0)"}
+                let strseed = engine.seeds[(indexPath as NSIndexPath).item].map{"\($0)"}
                 
                 cell.textLabel?.text = strseed.reduce(""){$0! + " "
                     + $1}
@@ -317,20 +319,20 @@ extension ViewController: UITableViewDataSource {
 		return cell
 	}
 	
-	func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+	func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
 		return tableView == sessionTableview
 	}
 
 	// Override to support rearranging the table view.
-	func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
+	func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to toIndexPath: IndexPath) {
 		assert(tableView == sessionTableview)
-		let f = engine.session[fromIndexPath.item]
-		let t = engine.session[toIndexPath.item]
-		engine.session[toIndexPath.item] = f
-		engine.session[fromIndexPath.item] = t
+		let f = engine.session[(fromIndexPath as NSIndexPath).item]
+		let t = engine.session[(toIndexPath as NSIndexPath).item]
+		engine.session[(toIndexPath as NSIndexPath).item] = f
+		engine.session[(fromIndexPath as NSIndexPath).item] = t
 	}
     
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return tableView == taskHistoryTableView ? 2 : 1
     }
 }

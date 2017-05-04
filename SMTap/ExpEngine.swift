@@ -145,7 +145,7 @@ class ExpEngine : NSObject {
 //        init audio
         audioURL = Bundle.main.url(forResource: "Tone440hz", withExtension: "wav")!
         
-        for _ in 0...1 {
+        for _ in 0...4 {
             let player: AVAudioPlayer
             do {
                 player = try AVAudioPlayer(contentsOf: audioURL)
@@ -475,7 +475,7 @@ class ExpEngine : NSObject {
     
     fileprivate func playTone(_ time:TimeInterval) {
         
-//        print("play: \(time), \(curBeat), \(beatIndex)")
+//        print("play: \(time), \(curBeat)")
         saveEvent(.Audio, time: time)
         curBeat += 1
         

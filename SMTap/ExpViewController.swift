@@ -64,7 +64,7 @@ class ExpViewController: UIViewController {
 				practiceLabel.isHidden = false
 				progressView.isHidden = false
 				remainTaps = 5
-				progressView.setProgress(0, animated: true)
+				progressView.setProgress(0, animated: false)
 				instructImg.isHidden = true
 			case 1:	//begin task
 				instructBigLabel.isHidden = true
@@ -75,7 +75,7 @@ class ExpViewController: UIViewController {
 				nextButton.isEnabled = false
 				practiceLabel.isHidden = true
 				remainTaps = curTask.length
-				progressView.setProgress(0, animated: true)
+				progressView.setProgress(0, animated: false)
 				instructImg.isHidden = false
 				instructImg.image = UIImage(named: "go")
 			case 2:	// continue tapping
@@ -192,30 +192,19 @@ class ExpViewController: UIViewController {
 	
 	@IBAction func tapUp(_ sender: UIButton) {
 		remainTaps -= 1
-		
+
+        //		update progress too:
 		guard step != 0 else {
-			let animated: Bool
-			if remainTaps == -1 {
-				remainTaps = 5
-				animated = false
-			} else {
-				animated = true
-			}
-				//		update progress too:
-			progressView.setProgress(1 - Float(remainTaps) / 5, animated: animated)
+            remainTaps = remainTaps == -1 ? 5 : remainTaps
+			progressView.setProgress(1 - Float(remainTaps) / 5, animated: false)
 			return
 		}
-		//		update progress too:
-		progressView.setProgress(1 - Float(remainTaps) / Float(curTask.length), animated: true)
-
+        //		update progress too:
+		progressView.setProgress(1 - Float(remainTaps) / Float(curTask.length), animated: false)
 		
 		engine.tapUp()
 		
 		if step == 1 { step = 2 }
-		
-//		remainTaps -= 1
-//		update progress too:
-//		progressView.setProgress(1 - Float(remainTaps) / Float(curTask.length), animated: true)
 		
 		if remainTaps == 0 {
 			step += 1
